@@ -1,0 +1,9 @@
+extends: graspnet.yaml
+
+seed: 100
+simulation:
+  gui: false
+
+evaluation:
+  seed_start: 100
+  modes: [oracle-perception, graspnet-only, open-vocab-simple, open-vocab-graspnet]

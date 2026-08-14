@@ -1,0 +1,12 @@
+extends: graspnet.yaml
+
+# Portfolio benchmark: only the complete semantic pipeline is enabled here.
+# This avoids accidentally mixing oracle/geometric results into the headline
+# YOLO-World + official GraspNet metric.
+seed: 0
+simulation:
+  gui: false
+
+evaluation:
+  seed_start: 0
+  modes: [open-vocab-graspnet]

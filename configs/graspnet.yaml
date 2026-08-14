@@ -1,0 +1,44 @@
+extends: default.yaml
+
+# GPU path: real YOLO-World + official GraspNet, isolated in its own Conda env.
+grasp:
+  generator: graspnet
+
+graspnet:
+  conda_environment: ovg-graspnet-cu117
+  inference_script: services/graspnet/infer.py
+  baseline_root: third_party/graspnet-baseline
+  checkpoint: weights/graspnet-checkpoint-rs.tar
+  num_point: 20000
+  collision_threshold: 0.01
+  timeout_s: 300
+  # The explicit table/trajectory filters below remain active. Removing the
+  # plane here prevents the model-free collision module from treating the whole
+  # support surface as object geometry around shallow targets.
+  exclude_table_plane_margin_m: 0.005
+  exclude_table_plane_targets: [bowl]
+
+# GraspNet scores are not calibrated to the geometric baseline's [0.5, 1.0]
+# values.  These thresholds retain collision-free, Panda-width candidates while
+# still requiring a predominantly downward tabletop approach.
+filters:
+  minimum_grasp_score: 0.10
+  # Allow collision/IK-checked oblique side approaches for tall objects.
+  minimum_topdown_alignment: 0.35
+  enable_topdown_orientation_refinement: true
+  # Network widths have a small sim-domain bias; Panda commands remain clamped
+  # to the physical 0.08 m opening in robot.py.
+  maximum_predicted_width_m: 0.095
+  # Official inference uses a 0.02 m gripper height: half-height + 5 mm tolerance.
+  maximum_target_height_axis_offset_m: 0.015
+  # A network pose whose approach axis had to be replaced by the explicit
+  # tabletop top-down prior must be tightly centered in the YOLO+RGB-D target.
+  maximum_topdown_refined_center_distance_m: 0.015
+  # Reject single-wall/rim proposals lacking visible points on both sides of
+  # the finger-closing axis. This operates on the semantic RGB-D cluster only.
+  minimum_contact_score: 0.05
+  contact_center_refinement_max_m: 0.025
+  semantic_plane_refinement_max_m: 0.04
+  contact_occlusion_fallback_max_center_distance_m: 0.012
+  contact_occlusion_fallback_min_alignment: 0.90
+  contact_occlusion_fallback_min_points: 100

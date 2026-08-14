@@ -1,0 +1,9 @@
+extends: graspnet.yaml
+
+simulation:
+  gui: true
+  realtime_pacing: true
+  hold_after_run_s: 10.0
+
+grasp:
+  target: bottle

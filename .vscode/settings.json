@@ -1,0 +1,7 @@
+{
+  "python.defaultInterpreterPath": "/home/ubuntu/miniforge3/envs/ovg/bin/python",
+  "python.terminal.activateEnvironment": true,
+  "files.associations": {
+    "*.ply": "plaintext"
+  }
+}

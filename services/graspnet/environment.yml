@@ -1,0 +1,16 @@
+name: ovg-graspnet
+channels: [pytorch, conda-forge]
+dependencies:
+  - python=3.8
+  - numpy=1.23
+  - scipy
+  # Compatible with graspnetAPI's NumPy 1.20.3 dependency.
+  - pillow=8.4
+  - pytorch=1.6
+  - cudatoolkit=10.2
+  # Newer MKL releases removed symbols required by the legacy PyTorch binary.
+  - mkl=2020.4
+  - pip
+  - pip:
+      - open3d>=0.8,<0.16
+      - graspnetAPI

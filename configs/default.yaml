@@ -1,0 +1,117 @@
+seed: 0
+output_root: outputs
+simulation:
+  gui: false
+  time_step: 0.004166666666666667
+  settle_steps: 240
+  gravity: [0.0, 0.0, -9.81]
+scene:
+  table_top_z: 0.0
+  object_names: [mug, bottle, bowl, box]
+  num_objects: 4
+  use_mesh_assets: true
+  mug_mesh_scale: 0.90
+  bowl_mesh_scale: 0.68
+camera:
+  width: 640
+  height: 480
+  vertical_fov_deg: 45.0
+  near_m: 0.05
+  far_m: 3.0
+  eye_world: [0.90, -0.70, 0.60]
+  target_world: [0.50, 0.0, 0.04]
+  up_world: [0.0, 0.0, 1.0]
+pointcloud:
+  workspace_min: [0.20, -0.45, -0.01]
+  workspace_max: [0.82, 0.45, 0.45]
+  voxel_size_m: 0.005
+robot:
+  home_joints: [0.0, -0.45, 0.0, -2.25, 0.0, 1.85, 0.78]
+  joint_force_n: 160.0
+  finger_force_n: 80.0
+  # Rubber-like finger-pad contact parameters used explicitly by PyBullet.
+  finger_lateral_friction: 2.0
+  finger_spinning_friction: 0.01
+  max_joint_velocity: 1.2
+grasp:
+  generator: geometric_baseline
+  target: box
+  approach_distance_m: 0.10
+  # Panda link 11 is already `panda_grasptarget`, 0.105 m from panda_hand.
+  # Therefore no second hand-to-TCP offset is applied.
+  tool_offset_m: 0.0
+  lift_distance_m: 0.12
+  min_lift_m: 0.06
+  max_width_m: 0.08
+  trajectory_steps: 24
+  control_steps_per_waypoint: 10
+  hold_steps: 180
+detection:
+  mode: yolo_world
+  confidence_threshold: 0.05
+  # Used only when the normal pass returns zero boxes. A box must be supported
+  # by spatially overlapping predictions from at least two distinct prompts.
+  fallback_confidence_threshold: 0.001
+  fallback_min_prompt_votes: 2
+  fallback_consensus_iou: 0.55
+  fallback_maximum_box_area_fraction: 0.08
+  fallback_reject_border_touching: true
+  force_prompt_consensus_targets: [bowl, box]
+  nms_iou_threshold: 0.45
+  metric_iou_threshold: 0.25
+  image_size: 640
+  image_size_by_target:
+    bowl: 960
+  max_detections: 50
+  device: auto
+  model: weights/yolov8s-worldv2.pt
+  text_prompts:
+    mug: [mug, cup, coffee mug]
+    bottle: [bottle, water bottle, red bottle]
+    red bottle: [red bottle, red water bottle, bottle]
+    bowl: [bowl, green bowl, ceramic bowl]
+    box: [box, cardboard box, brown box, shipping box, package]
+association:
+  depth_tolerance_m: 0.07
+  box_shrink_fraction: 0.10
+  cluster_eps_m: 0.018
+  cluster_min_points: 40
+  truth_center_tolerance_m: 0.08
+filters:
+  minimum_grasp_score: 0.50
+  minimum_width_m: 0.015
+  minimum_center_z_m: 0.035
+  minimum_topdown_alignment: 0.85
+  minimum_scene_clearance_m: 0.025
+  target_exclusion_margin_m: 0.015
+  collision_check_steps: 20
+  unreachable_motion_cost: 10.0
+  try_parallel_jaw_symmetry: true
+  minimum_approach_distance_m: 0.08
+  approach_distance_step_m: 0.01
+  enable_topdown_orientation_refinement: false
+  # RGB-D-only parallel-jaw support volume; no simulation truth is used.
+  contact_gripper_height_m: 0.03
+  contact_depth_m: 0.05
+  contact_minimum_side_offset_m: 0.003
+  contact_minimum_points: 12
+  contact_center_refinement_max_m: 0.0
+  semantic_plane_refinement_max_m: 0.0
+  semantic_plane_refinement_trigger_m: 0.02
+  contact_occlusion_fallback_max_center_distance_m: 0.0
+  contact_occlusion_fallback_min_alignment: 1.0
+  contact_occlusion_fallback_min_points: 1000000000
+  minimum_contact_score: 0.0
+scoring:
+  w_grasp: 0.40
+  w_detection: 0.20
+  w_center: 0.15
+  w_clearance: 0.15
+  w_depth: 0.10
+  w_motion: 0.10
+  w_contact: 0.20
+  # RGB-D target-center distance is normalized by this metric scale before the
+  # penalty is applied. It is perception-derived and never uses simulator IDs.
+  w_semantic_distance: 0.15
+  semantic_distance_scale_m: 0.04
+  unreachable_penalty: 2.0

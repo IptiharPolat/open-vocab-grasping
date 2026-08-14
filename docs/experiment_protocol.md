@@ -1,0 +1,37 @@
+# Experiment protocol
+
+Every episode records the resolved YAML, seed, selected mode, structured
+candidates (including rejection reasons), RGB, depth/segmentation when relevant,
+point cloud, state history, timing, and success measurements. Results must state
+whether perception was oracle or real YOLO-World and whether proposals came from
+GraspNet or the geometric baseline.
+
+Stage-1 acceptance was one reproducible CPU episode in DIRECT mode. Success
+requires both object lift of at least 6 cm and final proximity to the tool. Later
+stages retain those success conditions and aggregate fixed-seed target selection,
+detection, generation, reachability, grasp and end-to-end rates.
+
+Stage-2 detection success is measured against a bounding box derived from
+PyBullet instance segmentation at IoU >= 0.25. Simulator segmentation is read
+only after real YOLO-World inference and is written separately as
+`oracle_truth.json`; it is never supplied to the model. The highest-confidence
+box defines target selection. Zero predictions remain valid measured failures.
+
+Stage-5 single-run success requires all of the following: a real YOLO target box,
+at least one geometrically associated candidate, all configured physical and IK
+filters passing, completion of the execution state machine, target lift >= 0.06 m,
+and final target-to-tool distance <= 0.16 m. Simulator body IDs may support
+physics collision queries and post-selection truth metrics, but never semantic
+selection. Candidate-level rejection reasons and stage counts are mandatory.
+
+Stage 6 uses paired deterministic seeds. With `seed_start=S`, target index `t`
+and episode index `e`, the seed is `S + t*N + e`; the same target/seed pairs are
+used in each mode. `--episodes N` means N episodes for every target in every
+enabled mode. Oracle and open-vocabulary modes share the same physical, IK and
+trajectory filters; only semantic target selection differs. Reports include
+all failures. `open-vocab-graspnet` is executable through
+`configs/evaluation_graspnet.yaml`. The headline semantic benchmark uses
+`configs/evaluation_open_vocab_graspnet.yaml` and ten seeds each for mug,
+bottle, bowl and box (40 episodes total). The semantic-free `graspnet-only` mode is executable: target
+text is withheld from generation, filtering and ranking, and used only after
+selection to measure whether the requested object was lifted.

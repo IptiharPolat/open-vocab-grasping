@@ -1,0 +1,11 @@
+extends: default.yaml
+seed: 100
+simulation:
+  gui: false
+detection:
+  mode: yolo_world
+grasp:
+  generator: geometric_baseline
+evaluation:
+  seed_start: 100
+  modes: [oracle-perception, open-vocab-simple]

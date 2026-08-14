@@ -1,0 +1,11 @@
+extends: default.yaml
+
+# Intended for an ordinary desktop terminal or VS Code Run and Debug session.
+# Automated tests and batch evaluation continue to use DIRECT/headless mode.
+simulation:
+  gui: true
+  realtime_pacing: true
+  hold_after_run_s: 10.0
+
+grasp:
+  target: mug

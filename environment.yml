@@ -1,0 +1,9 @@
+name: ovg
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - pip:
+      # Install torch/torchvision from the official CPU or CUDA index first.
+      - -e .[dev,yolo]

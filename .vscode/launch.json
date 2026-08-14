@@ -1,0 +1,134 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "OVG: 官方 GraspNet 瓶子实时抓取",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "open_vocab_grasping.cli",
+      "args": [
+        "run",
+        "--target", "bottle",
+        "--seed", "0",
+        "--config", "configs/graspnet_gui.yaml"
+      ],
+      "python": "/home/ubuntu/miniforge3/envs/ovg/bin/python",
+      "cwd": "${workspaceFolder}",
+      "env": {"PYTHONPATH": "${workspaceFolder}/src"},
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "OVG: DeepSeek + 官方 GraspNet + 实时窗口",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "open_vocab_grasping.cli",
+      "args": [
+        "agent",
+        "--mode", "deepseek",
+        "--instruction", "请帮我抓取桌面上的瓶子",
+        "--seed", "0",
+        "--config", "configs/agent_graspnet_gui.yaml"
+      ],
+      "python": "/home/ubuntu/miniforge3/envs/ovg/bin/python",
+      "cwd": "${workspaceFolder}",
+      "env": {"PYTHONPATH": "${workspaceFolder}/src"},
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "OVG: Agent + PyBullet 实时窗口 (Mock)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "open_vocab_grasping.cli",
+      "args": [
+        "agent",
+        "--mode", "mock",
+        "--instruction", "请帮我抓取桌面上的杯子",
+        "--seed", "0",
+        "--config", "configs/agent_gui.yaml"
+      ],
+      "python": "/home/ubuntu/miniforge3/envs/ovg/bin/python",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "OVG: 交互式 Web 控制台",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "open_vocab_grasping.cli",
+      "args": [
+        "dashboard",
+        "--config", "configs/default.yaml",
+        "--host", "127.0.0.1",
+        "--port", "7860"
+      ],
+      "python": "/home/ubuntu/miniforge3/envs/ovg/bin/python",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src",
+        "ALL_PROXY": "",
+        "all_proxy": "",
+        "GRADIO_ANALYTICS_ENABLED": "False"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "OVG: PyBullet GUI 抓取演示",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "open_vocab_grasping.cli",
+      "args": [
+        "run",
+        "--instruction", "pick the mug",
+        "--seed", "0",
+        "--config", "configs/gui_demo.yaml"
+      ],
+      "python": "/home/ubuntu/miniforge3/envs/ovg/bin/python",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "OVG: YOLO + 三维关联",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "open_vocab_grasping.cli",
+      "args": [
+        "associate",
+        "--target", "mug",
+        "--seed", "0",
+        "--config", "configs/default.yaml"
+      ],
+      "python": "/home/ubuntu/miniforge3/envs/ovg/bin/python",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "OVG: 全部 CPU 测试",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["-q"],
+      "python": "/home/ubuntu/miniforge3/envs/ovg/bin/python",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src",
+        "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1"
+      },
+      "console": "integratedTerminal"
+    }
+  ]
+}

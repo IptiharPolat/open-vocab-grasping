@@ -1,0 +1,36 @@
+name: ovg-graspnet-cu117
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+dependencies:
+  # Compatibility bridge: new enough for RTX 3050 (sm_86), old enough for the
+  # official 2020 GraspNet CUDA extensions with only small source updates.
+  - python=3.10
+  # The channel qualifier prevents conda-forge's CUDA 11.2 build from winning
+  # the solve and mismatching the CUDA 11.7 compiler used for extensions.
+  - pytorch::pytorch=1.13.1
+  - pytorch::torchvision=0.14.1
+  - pytorch-cuda=11.7
+  - cuda-nvcc=11.7
+  - cuda-cccl=11.7.91
+  # Pin the individual dev packages: NVIDIA's historical
+  # cuda-libraries-dev=11.7 metapackage can otherwise resolve to current 13.x
+  # libraries when used against a moving channel index.
+  - cuda-cudart-dev=11.7.99
+  - libcublas-dev=11.10.3.66
+  - libcusparse-dev=11.7.4.91
+  - libcusolver-dev=11.4.0.1
+  - ninja
+  - numpy=1.24
+  - scipy
+  - pillow=9.5
+  # torch 1.13's cpp_extension imports pkg_resources, removed by newer
+  # setuptools releases.
+  - setuptools=59.5
+  - pip
+  - pip:
+      - open3d==0.18.0
+      # OpenCV 4.12+ selects NumPy 2 on Python 3.10; Open3D 0.18 and the
+      # original GraspNet code require the NumPy 1.x ABI.
+      - opencv-python-headless==4.10.0.84
