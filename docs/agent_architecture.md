@@ -28,9 +28,12 @@ historically exports an invalid `socks://` proxy.
 The current official hosted model configured here is `deepseek-v4-flash`.
 `deepseek-v2` is not presented as the model actually called.
 
-The real hosted path was end-to-end verified on 2026-08-14 using the Chinese
-instruction `请帮我抓取桌面上的杯子`. The returned target was `mug`, local
-validation passed, and the downstream robot state machine reached `DONE`.
+The fully combined hosted path was end-to-end verified on 2026-08-15 using the
+Chinese instruction `请帮我抓取桌面上的瓶子`. The returned target was `bottle`
+and the execution mode was `open-vocab-graspnet`; local schema/Python validation
+passed, real YOLO-World and the official checkpoint ran, and the downstream
+robot state machine reached `DONE` with a 0.117293 m lift. The selection path
+did not use simulator truth.
 
 ## Validated plan
 

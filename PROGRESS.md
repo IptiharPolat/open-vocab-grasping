@@ -781,3 +781,27 @@ Final verification on 2026-08-15:
 - Initialized the repository on branch `main`; `.gitignore` excludes environments,
   weights, third-party source and all generated outputs except `outputs/.gitkeep`.
   The staged tree was checked for large ignored paths and credential patterns.
+
+## Fully combined DeepSeek V4 + YOLO-World + official GraspNet run - 2026-08-15
+
+- The user launched the final command from the project-specific `ovg` Conda
+  environment so the shell-only `DEEPSEEK_API_KEY` remained outside source,
+  YAML and run artifacts.
+- Real `deepseek-v4-flash` returned HTTP 200 and a schema-valid plan for the
+  Chinese instruction `请帮我抓取桌面上的瓶子`. The plan explicitly selected
+  `open-vocab-graspnet`; the locally generated six-call Python DSL passed AST
+  validation and its recorded trace exactly matched the plan.
+- In that same audited run, real YOLO-World detected the bottle (IoU 0.913144),
+  the official RealSense GraspNet checkpoint generated 1,005 proposals and five
+  survived association, geometry, contact, collision, IK and trajectory checks.
+- Panda completed `RESET` through `DONE`, lifted the bottle 0.117293 m and ended
+  0.018208 m from it. Semantic selection used RGB-D scene geometry rather than
+  simulator truth. GraspNet inference took 8.829 s, DeepSeek planning 1.358 s,
+  and the total task took 26.308 s.
+- The run used 310 API tokens and retained its sanitized request/response,
+  validated plan, generated Python, exact trace, detections, candidate records,
+  point cloud and video under
+  `outputs/20260815_131627_786978_run_seed0/`.
+- This single successful demonstration is integration evidence, not a new
+  success-rate estimate. The fixed-seed official-GraspNet benchmark remains
+  **26/40 (65%)**, with all failures retained.

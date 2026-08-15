@@ -18,6 +18,10 @@ with 95% detection success and 87.5% IK reachability. Exact evidence is in
 The optional terminal Agent adds a DeepSeek high-level planner for Chinese or
 English commands. Its output is JSON-Schema validated and dispatched only to the
 existing grasp pipeline; it cannot execute arbitrary Python or shell commands.
+The fully combined path—real `deepseek-v4-flash`, real YOLO-World, the official
+GraspNet checkpoint and Panda execution—was verified in one seed-0 bottle run on
+2026-08-15. It reached `DONE` and lifted the bottle 0.117293 m without using
+simulator truth for semantic selection.
 
 ![Verified real YOLO-World and official GraspNet bottle grasp](outputs/20260814_153729_431593_run_seed0/demo.gif)
 
@@ -53,7 +57,7 @@ metrics, physics queries and success evaluation. See the full
 | Randomized Panda tabletop scene, fixed RGB-D camera, RGB/depth/instance capture | CPU verified |
 | OpenGL depth conversion, point cloud, projection and frame transforms | CPU verified and unit-tested |
 | Deterministic command parser, JSON Schema and action whitelist | CPU verified |
-| Terminal DeepSeek Agent, plan validation and audit logs | Real `deepseek-v4-flash` API E2E verified |
+| Terminal DeepSeek Agent, plan validation and audit logs | Real `deepseek-v4-flash` + official GraspNet E2E verified |
 | YOLOv8s-World-v2 dynamic text detection and raw/overlay output | Real model, CPU verified |
 | Scene-wide geometric candidate generation and semantic/depth association | CPU verified; not GraspNet |
 | Table/cloud/workspace/width/approach/IK/trajectory filtering | CPU verified |
@@ -169,6 +173,16 @@ integration check at `outputs/20260814_155614_596265_run_seed0/` used a clearly
 labelled Mock planner but real YOLO, official GraspNet and Panda execution; it
 lifted the bottle 0.118767 m and recorded `open-vocab-graspnet` consistently.
 
+Verified fully combined real-API example (2026-08-15): the instruction
+`请帮我抓取桌面上的瓶子` produced an `open-vocab-graspnet` plan through
+`deepseek-v4-flash` in 1.358 s (310 tokens). Real YOLO-World selected the bottle
+at IoU 0.913144, the official checkpoint emitted 1,005 candidates, five survived
+semantic/geometric/collision/IK filtering, and Panda lifted the bottle 0.117293 m.
+The complete run reached `DONE`; simulator truth was not used for semantic
+selection. See the [audited result](outputs/20260815_131627_786978_run_seed0/agent_result.json),
+[generated allowlisted plan](outputs/20260815_131627_786978_run_seed0/agent_generated_plan.py)
+and [execution video](outputs/20260815_131627_786978_run_seed0/demo.mp4).
+
 Useful commands are `/help`, `/status`, `/seed 3`, `/mode deepseek`,
 `/mode mock`, `/mode deterministic`, `/last` and `/quit`. For one reproducible
 non-interactive real-API run:
@@ -195,7 +209,7 @@ with no builtins against a recorder. Raw model-written Python is never executed.
 Authorization headers and API keys never enter these files. See
 [Agent architecture and safety](docs/agent_architecture.md).
 
-Verified real-API example (2026-08-14): the Chinese instruction
+Earlier CPU-geometric real-API example (2026-08-14): the Chinese instruction
 `请帮我抓取桌面上的杯子` produced a schema-valid `mug` plan through
 `deepseek-v4-flash` in 0.965 s (304 tokens), then the real YOLO/geometric
 pipeline retained four of 16 candidates and reached `DONE`. The mug lifted

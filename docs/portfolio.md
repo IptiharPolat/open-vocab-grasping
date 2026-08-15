@@ -20,10 +20,11 @@ the CPU geometric baseline and reports both successes and failures.
   65%（26/40；瓶子 9/10、杯子 6/10、盒子 6/10、碗 5/10），并将 14 次检测、
   候选和接触失败全部保留在统计中。
 - 接入真实 DeepSeek `deepseek-v4-flash` API 作为高层任务规划器，将中文指令转换为
-  受 JSON Schema、动作顺序和场景目标白名单约束的抓取计划；真实端到端实验使用
-  304 tokens、0.965 秒规划后驱动现有感知与控制闭环抓取杯子成功，并保存脱敏的
-  请求、响应、计划和执行审计记录。计划进一步编译为受 AST 白名单约束的 Python
-  DSL，仅允许六个控制器动作，在无 builtins 记录器上验证后才调度机器人。
+  受 JSON Schema、动作顺序和场景目标白名单约束的抓取计划；一次完整联合实验使用
+  310 tokens、1.358 秒规划，随后由真实 YOLO-World、官方 GraspNet 与 Panda 闭环
+  抓取瓶子并抬升 0.117293 m。系统保存脱敏的请求、响应、计划和执行审计记录，并将
+  计划编译为受 AST 白名单约束的 Python DSL，仅允许六个控制器动作，在无 builtins
+  记录器上验证后才调度机器人。
 
 ## English CV description
 
@@ -44,16 +45,17 @@ YOLO-World, Open3D, PyTorch**
   IK reachability 87.5%, and end-to-end success 65% (26/40), with every failure retained.
 - Integrated the real DeepSeek `deepseek-v4-flash` API as a high-level planner,
   validating Chinese-command plans against a JSON Schema, fixed action sequence,
-  and scene-target allowlist before dispatch. A verified 304-token, 0.965-second
-  planning call drove the existing perception/control pipeline to a successful
-  mug baseline grasp with redacted audit artifacts. Compiled each validated plan
-  to an AST-whitelisted six-call Python DSL before dispatch; raw model Python is
-  never executed.
+  and scene-target allowlist before dispatch. A fully combined 310-token,
+  1.358-second planning call drove real YOLO-World, the official GraspNet
+  checkpoint and Panda control to lift the bottle by 0.117293 m, with redacted
+  audit artifacts. Compiled each validated plan to an AST-whitelisted six-call
+  Python DSL before dispatch; raw model Python is never executed.
 
 ## Two-minute portfolio walkthrough
 
 1. Open the architecture diagram in `README.md` and state the truth boundary.
-2. Play `outputs/20260814_153729_431593_run_seed0/demo.mp4` (real GraspNet bottle).
+2. Play `outputs/20260815_131627_786978_run_seed0/demo.mp4` (real DeepSeek,
+   YOLO-World and official GraspNet bottle grasp).
 3. Compare `detections.png`, `filtered_candidates_2d.png` and
    `candidates.json` to show perception, association and rejection traces.
 4. Open the 40-row GraspNet `episodes.csv`, then explain 26 successes and the
