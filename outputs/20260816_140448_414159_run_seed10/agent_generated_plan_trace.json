@@ -1,0 +1,45 @@
+[
+  {
+    "step": "observe",
+    "status": "completed",
+    "requested_at_s": 0.0003615630002968828,
+    "started_at_s": 0.10133740899982513,
+    "completed_at_s": 0.15800808400035748
+  },
+  {
+    "step": "detect",
+    "status": "completed",
+    "requested_at_s": 0.1581185329996515,
+    "target": "bottle",
+    "started_at_s": 0.158133822000309,
+    "completed_at_s": 2.4682237260003603
+  },
+  {
+    "step": "generate_grasps",
+    "status": "completed",
+    "requested_at_s": 2.468259995000153,
+    "started_at_s": 2.4682780390003245,
+    "completed_at_s": 8.817358727000283
+  },
+  {
+    "step": "select_grasp",
+    "status": "completed",
+    "requested_at_s": 8.817464046000168,
+    "started_at_s": 8.81749480399958,
+    "completed_at_s": 9.034166964000178
+  },
+  {
+    "step": "execute",
+    "status": "completed",
+    "requested_at_s": 9.034230623999974,
+    "started_at_s": 9.034262344000126,
+    "completed_at_s": 11.427191736999703
+  },
+  {
+    "step": "evaluate",
+    "status": "completed",
+    "requested_at_s": 11.42726103699988,
+    "started_at_s": 11.427278008999565,
+    "completed_at_s": 13.096970495999813
+  }
+]

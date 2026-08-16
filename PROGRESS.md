@@ -1,6 +1,6 @@
 # Progress
 
-Last updated: 2026-08-14
+Last updated: 2026-08-16
 
 ## Stage 0 - environment audit
 
@@ -929,3 +929,19 @@ Final verification on 2026-08-15:
   deterministic seeds. Both languages had 100% plan/target/code validity.
 - Final regression after recording the real benchmark: **64 passed in 3.71 s**;
   `git diff --check` passes.
+
+## Public GitHub release preparation - 2026-08-16
+
+- Created a dedicated `agent/github-release` branch so publication-specific
+  changes remain reviewable instead of being mixed directly into `main`.
+- Added a GitHub Actions CPU job for Python 3.10 and the complete pytest suite.
+- Curated one successful, real DeepSeek + YOLO-World + official-GraspNet bottle
+  episode: generated Python, synchronized trace, structured results, detection
+  and candidate images, GIF and MP4. Large point clouds, weights, third-party
+  source trees and bulk run outputs remain ignored.
+- Curated the actual 40-case Agent benchmark and its paired downstream benchmark
+  as CSV/JSON/Markdown evidence. README links now resolve to tracked release
+  evidence instead of ignored local-only historical runs.
+- No project-level open-source license has been selected yet. The repository can
+  be public for portfolio viewing, but reuse rights remain reserved until the
+  owner deliberately chooses a license.

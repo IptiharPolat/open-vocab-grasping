@@ -1,0 +1,169 @@
+{
+  "actual_run": true,
+  "episode_count": 40,
+  "targets": [
+    "bottle",
+    "bowl",
+    "box",
+    "mug"
+  ],
+  "modes": {
+    "open-vocab-graspnet": {
+      "episodes": 40,
+      "target_selection_correct_rate": 0.925,
+      "target_selection_correct_count": 37,
+      "detection_success_rate": 0.95,
+      "detection_success_count": 38,
+      "candidate_generation_success_rate": 1,
+      "candidate_generation_success_count": 40,
+      "ik_reachable_rate": 0.875,
+      "ik_reachable_count": 35,
+      "grasp_success_rate": 0.65,
+      "grasp_success_count": 26,
+      "end_to_end_success_rate": 0.65,
+      "end_to_end_success_count": 26,
+      "mean_detection_s": 0.3329139781749987,
+      "mean_grasp_generation_s": 6.4260083697249994,
+      "mean_graspnet_inference_s": 5.8449486657250045,
+      "mean_planning_s": 0.05670219777499312,
+      "mean_execution_s": 2.1229740625500026,
+      "mean_total_s": 11.519494515799991,
+      "failure_distribution": {
+        "detection_failed": 1,
+        "no_accepted_candidate": 4,
+        "object_not_lifted": 9
+      }
+    }
+  },
+  "by_target": {
+    "bottle": {
+      "episodes": 10,
+      "target_selection_correct_rate": 0.9,
+      "target_selection_correct_count": 9,
+      "detection_success_rate": 0.9,
+      "detection_success_count": 9,
+      "candidate_generation_success_rate": 1,
+      "candidate_generation_success_count": 10,
+      "ik_reachable_rate": 0.9,
+      "ik_reachable_count": 9,
+      "grasp_success_rate": 0.9,
+      "grasp_success_count": 9,
+      "end_to_end_success_rate": 0.9,
+      "end_to_end_success_count": 9,
+      "mean_detection_s": 0.11238657329999455,
+      "mean_grasp_generation_s": 6.606912275500003,
+      "mean_graspnet_inference_s": 5.906533631899999,
+      "mean_planning_s": 0.05915882189998456,
+      "mean_execution_s": 2.2027359251000007,
+      "mean_total_s": 11.409050060899995,
+      "failure_distribution": {
+        "no_accepted_candidate": 1
+      }
+    },
+    "bowl": {
+      "episodes": 10,
+      "target_selection_correct_rate": 0.9,
+      "target_selection_correct_count": 9,
+      "detection_success_rate": 1,
+      "detection_success_count": 10,
+      "candidate_generation_success_rate": 1,
+      "candidate_generation_success_count": 10,
+      "ik_reachable_rate": 0.9,
+      "ik_reachable_count": 9,
+      "grasp_success_rate": 0.5,
+      "grasp_success_count": 5,
+      "end_to_end_success_rate": 0.5,
+      "end_to_end_success_count": 5,
+      "mean_detection_s": 0.6646357364999858,
+      "mean_grasp_generation_s": 5.751211476199989,
+      "mean_graspnet_inference_s": 5.562850480700035,
+      "mean_planning_s": 0.08216058179998527,
+      "mean_execution_s": 2.1852879916999997,
+      "mean_total_s": 11.154730735799978,
+      "failure_distribution": {
+        "no_accepted_candidate": 1,
+        "object_not_lifted": 4
+      }
+    },
+    "box": {
+      "episodes": 10,
+      "target_selection_correct_rate": 0.9,
+      "target_selection_correct_count": 9,
+      "detection_success_rate": 0.9,
+      "detection_success_count": 9,
+      "candidate_generation_success_rate": 1,
+      "candidate_generation_success_count": 10,
+      "ik_reachable_rate": 0.7,
+      "ik_reachable_count": 7,
+      "grasp_success_rate": 0.6,
+      "grasp_success_count": 6,
+      "end_to_end_success_rate": 0.6,
+      "end_to_end_success_count": 6,
+      "mean_detection_s": 0.460826766900027,
+      "mean_grasp_generation_s": 6.735605235700007,
+      "mean_graspnet_inference_s": 6.018759379599987,
+      "mean_planning_s": 0.02272152980001465,
+      "mean_execution_s": 1.6717249729000172,
+      "mean_total_s": 11.497946623399992,
+      "failure_distribution": {
+        "detection_failed": 1,
+        "no_accepted_candidate": 2,
+        "object_not_lifted": 1
+      }
+    },
+    "mug": {
+      "episodes": 10,
+      "target_selection_correct_rate": 1,
+      "target_selection_correct_count": 10,
+      "detection_success_rate": 1,
+      "detection_success_count": 10,
+      "candidate_generation_success_rate": 1,
+      "candidate_generation_success_count": 10,
+      "ik_reachable_rate": 1,
+      "ik_reachable_count": 10,
+      "grasp_success_rate": 0.6,
+      "grasp_success_count": 6,
+      "end_to_end_success_rate": 0.6,
+      "end_to_end_success_count": 6,
+      "mean_detection_s": 0.09380683599998747,
+      "mean_grasp_generation_s": 6.6103044915,
+      "mean_graspnet_inference_s": 5.8916511706999986,
+      "mean_planning_s": 0.06276785759998801,
+      "mean_execution_s": 2.432147360499994,
+      "mean_total_s": 12.0162506431,
+      "failure_distribution": {
+        "object_not_lifted": 4
+      }
+    }
+  },
+  "overall": {
+    "episodes": 40,
+    "target_selection_correct_rate": 0.925,
+    "target_selection_correct_count": 37,
+    "detection_success_rate": 0.95,
+    "detection_success_count": 38,
+    "candidate_generation_success_rate": 1,
+    "candidate_generation_success_count": 40,
+    "ik_reachable_rate": 0.875,
+    "ik_reachable_count": 35,
+    "grasp_success_rate": 0.65,
+    "grasp_success_count": 26,
+    "end_to_end_success_rate": 0.65,
+    "end_to_end_success_count": 26,
+    "mean_detection_s": 0.3329139781749987,
+    "mean_grasp_generation_s": 6.4260083697249994,
+    "mean_graspnet_inference_s": 5.8449486657250045,
+    "mean_planning_s": 0.05670219777499312,
+    "mean_execution_s": 2.1229740625500026,
+    "mean_total_s": 11.519494515799991,
+    "failure_distribution": {
+      "detection_failed": 1,
+      "no_accepted_candidate": 4,
+      "object_not_lifted": 9
+    }
+  },
+  "unavailable_modes": {},
+  "episodes_per_target_per_mode": 10,
+  "seed_start": 0,
+  "planned_episode_count": 40
+}

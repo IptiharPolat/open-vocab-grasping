@@ -1,0 +1,26 @@
+{
+  "instruction": "请帮我抓取桌面上的瓶子",
+  "provider": "deepseek",
+  "request": {
+    "model": "deepseek-v4-flash",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are the high-level task planner for a PyBullet robot grasping system. Interpret the user's Chinese or English command. Return exactly one JSON object and no markdown. Only a pick action is permitted. The target must be one exact English name from this scene whitelist: [bottle, bowl, box, mug]. The steps must be exactly [\"observe\", \"detect\", \"generate_grasps\", \"select_grasp\", \"execute\", \"evaluate\"]. The execution_mode must be open-vocab-graspnet. Never output Python, shell commands, imports, file operations, or additional fields. JSON example: {\"action\": \"pick\", \"target\": \"mug\", \"steps\": [\"observe\", \"detect\", \"generate_grasps\", \"select_grasp\", \"execute\", \"evaluate\"], \"execution_mode\": \"open-vocab-graspnet\", \"explanation\": \"The user asked to pick the mug.\"}"
+      },
+      {
+        "role": "user",
+        "content": "请帮我抓取桌面上的瓶子"
+      }
+    ],
+    "response_format": {
+      "type": "json_object"
+    },
+    "thinking": {
+      "type": "disabled"
+    },
+    "temperature": 0.0,
+    "max_tokens": 800,
+    "stream": false
+  }
+}

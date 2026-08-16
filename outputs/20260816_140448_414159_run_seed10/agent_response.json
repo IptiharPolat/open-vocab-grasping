@@ -1,0 +1,28 @@
+{
+  "id": "19fbe5b3-61bc-49c3-8d4c-1aded205b04d",
+  "object": "chat.completion",
+  "created": 1786860287,
+  "model": "deepseek-v4-flash",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "{\"action\": \"pick\", \"target\": \"bottle\", \"steps\": [\"observe\", \"detect\", \"generate_grasps\", \"select_grasp\", \"execute\", \"evaluate\"], \"execution_mode\": \"open-vocab-graspnet\", \"explanation\": \"The user asked to pick the bottle on the table.\"}"
+      },
+      "logprobs": null,
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 235,
+    "completion_tokens": 75,
+    "total_tokens": 310,
+    "prompt_tokens_details": {
+      "cached_tokens": 128
+    },
+    "prompt_cache_hit_tokens": 128,
+    "prompt_cache_miss_tokens": 107
+  },
+  "system_fingerprint": "a26a7955944dc5c60445bff77fac9c8e"
+}

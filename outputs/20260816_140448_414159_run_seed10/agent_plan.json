@@ -1,0 +1,14 @@
+{
+  "action": "pick",
+  "target": "bottle",
+  "steps": [
+    "observe",
+    "detect",
+    "generate_grasps",
+    "select_grasp",
+    "execute",
+    "evaluate"
+  ],
+  "execution_mode": "open-vocab-graspnet",
+  "explanation": "The user asked to pick the bottle on the table."
+}

@@ -25,7 +25,7 @@ generated programs; all 40 stage-gated robot tasks executed and **26/40 (65%)**
 succeeded. The 14 failures were entirely downstream: one detector miss, four
 no-accepted-candidate cases and nine failed lifts.
 
-![Verified real YOLO-World and official GraspNet bottle grasp](outputs/20260814_153729_431593_run_seed0/demo.gif)
+![Verified DeepSeek, real YOLO-World and official GraspNet bottle grasp](outputs/20260816_140448_414159_run_seed10/demo.gif)
 
 ## Architecture
 
@@ -181,9 +181,11 @@ Verified fully combined real-API example (2026-08-15): the instruction
 at IoU 0.913144, the official checkpoint emitted 1,005 candidates, five survived
 semantic/geometric/collision/IK filtering, and Panda lifted the bottle 0.117293 m.
 The complete run reached `DONE`; simulator truth was not used for semantic
-selection. See the [audited result](outputs/20260815_131627_786978_run_seed0/agent_result.json),
-[generated allowlisted plan](outputs/20260815_131627_786978_run_seed0/agent_generated_plan.py)
-and [execution video](outputs/20260815_131627_786978_run_seed0/demo.mp4).
+selection. The public release includes a later successful fixed-seed example:
+the [audited result](outputs/20260816_140448_414159_run_seed10/agent_result.json),
+[generated allowlisted plan](outputs/20260816_140448_414159_run_seed10/agent_generated_plan.py),
+[stage trace](outputs/20260816_140448_414159_run_seed10/agent_generated_plan_trace.json)
+and [execution video](outputs/20260816_140448_414159_run_seed10/demo.mp4).
 
 Useful commands are `/help`, `/status`, `/seed 3`, `/mode deepseek`,
 `/mode mock`, `/mode deterministic`, `/last` and `/quit`. For one reproducible
@@ -219,8 +221,9 @@ Earlier CPU-geometric real-API example (2026-08-14): the Chinese instruction
 `请帮我抓取桌面上的杯子` produced a schema-valid `mug` plan through
 `deepseek-v4-flash` in 0.965 s (304 tokens), then the real YOLO/geometric
 pipeline retained four of 16 candidates and reached `DONE`. The mug lifted
-0.108188 m. See the [validated Agent result](outputs/20260814_122735_073119_run_seed0/agent_result.json)
-and [execution video](outputs/20260814_122735_073119_run_seed0/demo.mp4).
+0.108188 m. Its full local audit remains under
+`outputs/20260814_122735_073119_run_seed0/`; the compact public evidence above
+uses the stronger official-GraspNet path.
 
 ### Agent reliability evaluation
 
@@ -260,8 +263,9 @@ robot trials all used real YOLO-World, the official GraspNet checkpoint and
 stage-gated generated Python; all four reached `DONE`. Lift was 0.098600 m for
 mug, 0.117607 m for bottle, 0.114215 m for bowl and 0.116835 m for box. This 4/4
 is a bounded integration sample, not a replacement for the 26/40 fixed-seed
-grasp reliability benchmark. See [cases.csv](outputs/20260816_133053_957394_agent_evaluation/cases.csv)
-and the [summary](outputs/20260816_133053_957394_agent_evaluation/summary.md).
+grasp reliability benchmark. Its local evidence remains under
+`outputs/20260816_133053_957394_agent_evaluation/`; the public release retains
+the larger 40-case full-chain benchmark below.
 
 The true 40-episode Agent benchmark is reproduced with:
 
@@ -351,13 +355,13 @@ provide:
 The equivalent graphical desktop command is `bash scripts/run_gui_demo.sh`.
 PyBullet GUI requires a valid `DISPLAY`; a remote/headless session should keep
 `simulation.gui: false` and inspect PNG, PLY, GIF and MP4 files in `outputs/`.
-Useful verified artifacts include:
+Useful verified public artifacts from one successful full-chain bottle episode:
 
-- [real YOLO detection](outputs/20260812_142139_666676_detect_seed0/detections.png)
-- [2D semantic/geometric association](outputs/20260812_235957_378687_associate_seed0/association_2d.png)
-- [3D top-down association](outputs/20260812_235957_378687_associate_seed0/association_3d_topdown.png)
-- [end-to-end structured result](outputs/20260813_113306_340633_run_seed0/result.json)
-- [H.264 demonstration video](outputs/20260813_113306_340633_run_seed0/demo.mp4)
+- [real YOLO detection](outputs/20260816_140448_414159_run_seed10/detections.png)
+- [2D semantic/geometric candidate filtering](outputs/20260816_140448_414159_run_seed10/filtered_candidates_2d.png)
+- [3D candidate visualization](outputs/20260816_140448_414159_run_seed10/filtered_candidates_3d.png)
+- [end-to-end structured result](outputs/20260816_140448_414159_run_seed10/result.json)
+- [H.264 demonstration video](outputs/20260816_140448_414159_run_seed10/demo.mp4)
 
 ## GraspNet GPU path
 
@@ -418,13 +422,11 @@ evaluation ran 20 `open-vocab-graspnet` episodes:
 
 Mean official GraspNet inference was 6.002 s. Failures were three detector
 misses, four no-accepted-candidate episodes and seven mug contact failures.
-The source [episodes.csv](outputs/20260814_154643_981832_evaluation/episodes.csv)
-and [GPU summary](outputs/20260814_154643_981832_evaluation/summary.md) contain
-all runs; see the updated [failure analysis](docs/failure_analysis.md).
+The original source remains locally at
+`outputs/20260814_154643_981832_evaluation/`; see the updated
+[failure analysis](docs/failure_analysis.md). The earlier CPU evaluation remains
+locally at `outputs/20260813_115220_286118_evaluation/`.
 
-- [episodes.csv](outputs/20260813_115220_286118_evaluation/episodes.csv)
-- [summary.json](outputs/20260813_115220_286118_evaluation/summary.json)
-- [summary.md](outputs/20260813_115220_286118_evaluation/summary.md)
 - [failure analysis](docs/failure_analysis.md)
 - [experiment protocol](docs/experiment_protocol.md)
 
