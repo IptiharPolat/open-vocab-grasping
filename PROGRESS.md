@@ -945,3 +945,16 @@ Final verification on 2026-08-15:
 - No project-level open-source license has been selected yet. The repository can
   be public for portfolio viewing, but reuse rights remain reserved until the
   owner deliberately chooses a license.
+
+## Local artifact cleanup - 2026-08-16
+
+- Removed the obsolete project-local `.venv`; the dedicated Conda environments
+  (`ovg` and the isolated GraspNet service environment) remain the supported
+  execution environments.
+- Removed 400-plus ignored historical runs, generated raw point clouds,
+  candidate dumps, logs and Python caches. The project directory decreased from
+  about 5.2 GB to about 51 MB.
+- Retained `weights/`, `third_party/`, all tracked source and documentation, and
+  the three tracked release-evidence directories required by the public README:
+  the successful DeepSeek/YOLO-World/official-GraspNet episode and both 40-case
+  benchmark summaries.
