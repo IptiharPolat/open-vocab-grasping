@@ -12,7 +12,7 @@ terminal instruction
   -> Draft 2020-12 JSON Schema
   -> scene target whitelist
   -> locally generated six-call Python DSL
-  -> strict AST allowlist + no-builtins recorder execution
+  -> strict AST allowlist + no-builtins SafeRobotController execution
   -> existing YOLO/RGB-D/grasp/filter/IK/execution pipeline
   -> structured result and audit artifacts
 ```
@@ -82,6 +82,11 @@ Successful planner dispatches add these files to the ordinary pipeline output:
 - `agent_generated_plan_trace.json`: executed and rechecked six-step trace;
 - `agent_result.json`: plan, provider metadata and robot result.
 
+The generated Python runs in a restricted worker. Each controller method grants
+one capability to the matching real pipeline stage, then blocks until that stage
+reports completion. The audit trace therefore records request/start/completion
+times from the actual run; it is not merely a pre-dispatch method replay.
+
 No request header or API key is passed to the audit writer. Failed plans are not
 executed. A future iteration may add a separate planning-failure directory and a
 constrained retry policy.
@@ -93,5 +98,7 @@ grasp task and violate the action whitelist. The implemented code-generation
 layer therefore compiles only an already schema-valid plan into one function
 with six exact `controller` calls. AST validation rejects imports, builtins,
 extra statements, arbitrary attributes, reordered steps and target changes. The
-code executes with an empty `__builtins__` mapping against a recorder; only a
-matching trace dispatches the real pipeline. Raw provider Python is never run.
+code executes with an empty `__builtins__` mapping against `SafeRobotController`.
+The real pipeline blocks at each stage until the generated call authorizes it,
+and completion releases the program to request the next step. Raw provider
+Python is never run.

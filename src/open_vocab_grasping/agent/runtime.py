@@ -6,8 +6,9 @@ from pathlib import Path
 from typing import Any, Callable, Protocol
 
 from open_vocab_grasping.agent.deepseek_client import DeepSeekPlanner, PlannerResponse
-from open_vocab_grasping.agent.codegen import compile_and_execute_plan
+from open_vocab_grasping.agent.codegen import execute_plan_python, render_plan_python, validate_plan_python
 from open_vocab_grasping.agent.local_planners import DeterministicPlanner, MockDeepSeekPlanner
+from open_vocab_grasping.agent.safe_controller import SafeRobotController
 from open_vocab_grasping.pipeline import run_open_vocab_grasp
 
 
@@ -103,7 +104,8 @@ def run_agent_instruction(
     )
     if response.plan["execution_mode"] != configured_mode:
         response = replace(response, plan={**response.plan, "execution_mode": configured_mode})
-    generated_source, generated_trace = compile_and_execute_plan(response.plan)
+    generated_source = render_plan_python(response.plan)
+    validate_plan_python(generated_source, str(response.plan["target"]))
     _emit(
         event_callback,
         "plan_validated",
@@ -113,8 +115,30 @@ def run_agent_instruction(
         steps=response.plan["steps"],
         generated_python_validated=True,
     )
+    controller = SafeRobotController(str(response.plan["target"]))
+    controller.start(
+        lambda: execute_plan_python(
+            generated_source, str(response.plan["target"]), controller
+        )
+    )
     _emit(event_callback, "robot_pipeline_started", target=response.plan["target"], seed=seed)
-    output, robot_result = run_open_vocab_grasp(config, str(response.plan["target"]), seed)
+    try:
+        output, robot_result = run_open_vocab_grasp(
+            config,
+            str(response.plan["target"]),
+            seed,
+            stage_controller=controller,
+        )
+        generated_trace = controller.finish()
+    except Exception as exc:
+        controller.abort(f"{type(exc).__name__}: {exc}")
+        raise
+    robot_result["generated_plan_execution"] = {
+        "python_executed": True,
+        "controller": "SafeRobotController",
+        "pipeline_stage_gating": True,
+        "completed_steps": [record["step"] for record in generated_trace],
+    }
     execution = AgentExecution(
         success=bool(robot_result["success"]),
         output=output,
@@ -133,5 +157,6 @@ def run_agent_instruction(
         failure_reason=robot_result.get("failure_reason"),
         output=str(output),
         video=str(output / "demo.mp4"),
+        generated_python=str(output / "agent_generated_plan.py"),
     )
     return execution

@@ -31,6 +31,8 @@ def _event_printer(event: str, fields: dict[str, Any]) -> None:
     print(f"[{labels.get(event, event)}] {json.dumps(fields, ensure_ascii=False)}")
     if event == "robot_pipeline_finished" and fields.get("video"):
         print(f"[演示视频] {fields['video']}")
+    if event == "robot_pipeline_finished" and fields.get("generated_python"):
+        print(f"[生成的抓取规划 Python] {fields['generated_python']}")
 
 
 def run_agent_once(config_path: str, instruction: str, seed: int, mode: str) -> AgentExecution:

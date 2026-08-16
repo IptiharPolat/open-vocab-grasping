@@ -8,7 +8,7 @@ from dataclasses import replace
 from datetime import datetime, timezone
 from pathlib import Path
 from time import perf_counter
-from typing import Any
+from typing import Any, Protocol
 
 import imageio.v3 as iio
 import numpy as np
@@ -32,6 +32,21 @@ from open_vocab_grasping.simulation.camera import segmentation_body_ids
 from open_vocab_grasping.simulation.world import SimulationWorld
 from open_vocab_grasping.visualization.overlay import save_association_overlay, save_detection_overlay, save_rgb
 from open_vocab_grasping.visualization.pointcloud_vis import save_candidate_topdown, save_topdown_preview
+
+
+class PipelineStageController(Protocol):
+    def begin_stage(self, step: str) -> None: ...
+    def complete_stage(self, step: str) -> None: ...
+
+
+def _begin_stage(controller: PipelineStageController | None, step: str) -> None:
+    if controller is not None:
+        controller.begin_stage(step)
+
+
+def _complete_stage(controller: PipelineStageController | None, step: str) -> None:
+    if controller is not None:
+        controller.complete_stage(step)
 
 
 def make_run_dir(config: dict[str, Any], kind: str, seed: int) -> Path:
@@ -449,16 +464,25 @@ def associate_scene(config: dict[str, Any], target: str, seed: int) -> tuple[Pat
 
 
 def run_open_vocab_grasp(
-    config: dict[str, Any], target: str | None, seed: int, *, semantic_selection: bool = True
+    config: dict[str, Any],
+    target: str | None,
+    seed: int,
+    *,
+    semantic_selection: bool = True,
+    stage_controller: PipelineStageController | None = None,
 ) -> tuple[Path, dict[str, Any]]:
     """Execute real YOLO selection with geometric or isolated official GraspNet proposals."""
     target = target or str(config["grasp"]["target"])
     output = make_run_dir(config, "run", seed)
     started = perf_counter()
     with SimulationWorld.create(config, seed) as world:
+        _begin_stage(stage_controller, "observe")
         target_key = resolve_scene_target(world, target)
         observation = world.camera.capture()
         truth = oracle_detection(world, observation, target_key)
+        _complete_stage(stage_controller, "observe")
+
+        _begin_stage(stage_controller, "detect")
         detection_config = config["detection"]
         detector: YOLOWorldDetector | None = None
         if semantic_selection:
@@ -503,6 +527,9 @@ def run_open_vocab_grasp(
                 "target_selection_correct": None,
                 "selected_iou": None,
             }
+        _complete_stage(stage_controller, "detect")
+
+        _begin_stage(stage_controller, "generate_grasps")
         all_points, all_colors = rgbd_to_pointcloud(
             observation.rgb, observation.depth_m, observation.intrinsic, observation.T_world_camera
         )
@@ -553,6 +580,9 @@ def run_open_vocab_grasp(
                 f"Unsupported grasp.generator {generator_name!r}; expected geometric_baseline or graspnet"
             )
         generation_s = perf_counter() - generation_started
+        _complete_stage(stage_controller, "generate_grasps")
+
+        _begin_stage(stage_controller, "select_grasp")
         records = []
         semantic_target_center: np.ndarray | None = None
         if not semantic_selection:
@@ -679,6 +709,8 @@ def run_open_vocab_grasp(
         def capture_video_frame() -> None:
             video_frames.append(world.camera.capture().rgb)
 
+        _complete_stage(stage_controller, "select_grasp")
+        _begin_stage(stage_controller, "execute")
         execution_started = perf_counter()
         if selected is None:
             if semantic_selection and not detections:
@@ -706,7 +738,9 @@ def run_open_vocab_grasp(
                 "metrics": execution.metrics,
             }
         execution_s = perf_counter() - execution_started
+        _complete_stage(stage_controller, "execute")
 
+        _begin_stage(stage_controller, "evaluate")
         result.update(
             {
                 "mode": result_mode,
@@ -788,6 +822,7 @@ def run_open_vocab_grasp(
     save_config(config, output / "config.yaml")
     write_environment_snapshot(output / "environment.json")
     (output / "result.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
+    _complete_stage(stage_controller, "evaluate")
     return output, result
 
 

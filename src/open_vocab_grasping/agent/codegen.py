@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import ast
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Protocol
 
 from open_vocab_grasping.agent.schemas import CANONICAL_PICK_STEPS
 
@@ -17,6 +17,15 @@ _METHODS = (
     "execute",
     "evaluate",
 )
+
+
+class PlanController(Protocol):
+    def observe(self) -> None: ...
+    def detect(self, target: str) -> None: ...
+    def generate_grasps(self) -> None: ...
+    def select_grasp(self) -> None: ...
+    def execute(self) -> None: ...
+    def evaluate(self) -> None: ...
 
 
 def render_plan_python(plan: dict[str, Any]) -> str:
@@ -83,6 +92,14 @@ def validate_plan_python(source: str, expected_target: str) -> ast.Module:
     return tree
 
 
+def execute_plan_python(source: str, expected_target: str, controller: PlanController) -> None:
+    """Execute validated generated Python only against an explicit safe controller."""
+    tree = validate_plan_python(source, expected_target)
+    namespace: dict[str, Any] = {}
+    exec(compile(tree, "<validated-grasp-plan>", "exec"), {"__builtins__": {}}, namespace)
+    namespace["execute_plan"](controller)
+
+
 @dataclass
 class _PlanRecorder:
     expected_target: str
@@ -115,11 +132,8 @@ class _PlanRecorder:
 def compile_and_execute_plan(plan: dict[str, Any]) -> tuple[str, list[dict[str, Any]]]:
     """Compile, AST-validate and execute the tiny DSL with no Python builtins."""
     source = render_plan_python(plan)
-    tree = validate_plan_python(source, str(plan["target"]))
-    namespace: dict[str, Any] = {}
-    exec(compile(tree, "<validated-grasp-plan>", "exec"), {"__builtins__": {}}, namespace)
     recorder = _PlanRecorder(str(plan["target"]))
-    namespace["execute_plan"](recorder)
+    execute_plan_python(source, str(plan["target"]), recorder)
     executed_steps = [str(entry["step"]) for entry in recorder.trace]
     if executed_steps != list(CANONICAL_PICK_STEPS):
         raise RuntimeError("Generated Python execution trace differs from the validated plan")

@@ -805,3 +805,25 @@ Final verification on 2026-08-15:
 - This single successful demonstration is integration evidence, not a new
   success-rate estimate. The fixed-seed official-GraspNet benchmark remains
   **26/40 (65%)**, with all failures retained.
+
+## Generated Python synchronized robot-stage execution - 2026-08-16
+
+- Replaced the generated-plan recorder-only dispatch with `SafeRobotController`.
+  The AST-validated Python now runs in a restricted worker with no builtins; each
+  of its six allowlisted calls blocks until the real pipeline begins and completes
+  the matching observation, detection, grasp generation, selection, physical
+  execution or evaluation stage.
+- The robot pipeline cannot advance without the exact one-shot stage capability.
+  Missing, reordered, extra or target-changing calls fail closed. The completed
+  audit trace records authorization, real stage start and real stage completion
+  timestamps instead of only replaying method names.
+- Added `generated_plan_execution` to the structured robot result and print the
+  generated `.py` path directly in the terminal, so the generated program is
+  visible rather than represented only by `generated_python_validated: true`.
+- Actual CPU integration run used the explicitly labelled Mock planner with real
+  YOLO-World and the geometric baseline. All six generated-code gates completed,
+  Panda lifted the mug 0.078137 m and reached `DONE`. Artifact:
+  `outputs/20260816_125925_863684_run_seed0/`.
+- The Mock result is not a hosted DeepSeek claim and the geometric proposals are
+  not GraspNet. Its purpose is to verify the new code-to-real-pipeline execution
+  boundary without API cost or CUDA dependence.

@@ -102,9 +102,16 @@ def test_agent_runtime_writes_redacted_audit(
     output = tmp_path / "run"
     output.mkdir()
     robot_result = {"success": True, "failure_reason": None, "state_history": ["DONE"]}
+    def fake_robot_pipeline(
+        config: dict[str, Any], target: str, seed: int, *, stage_controller: Any
+    ) -> tuple[Path, dict[str, Any]]:
+        for step in CANONICAL_PICK_STEPS:
+            stage_controller.begin_stage(step)
+            stage_controller.complete_stage(step)
+        return output, robot_result
+
     monkeypatch.setattr(
-        "open_vocab_grasping.agent.runtime.run_open_vocab_grasp",
-        lambda config, target, seed: (output, robot_result),
+        "open_vocab_grasping.agent.runtime.run_open_vocab_grasp", fake_robot_pipeline
     )
 
     class FakePlanner:
@@ -133,6 +140,15 @@ def test_agent_runtime_writes_redacted_audit(
     assert (output / "agent_result.json").is_file()
     assert (output / "agent_generated_plan.py").is_file()
     assert (output / "agent_generated_plan_trace.json").is_file()
+    assert execution.robot_result["generated_plan_execution"] == {
+        "python_executed": True,
+        "controller": "SafeRobotController",
+        "pipeline_stage_gating": True,
+        "completed_steps": list(CANONICAL_PICK_STEPS),
+    }
+    trace = json.loads((output / "agent_generated_plan_trace.json").read_text())
+    assert [entry["step"] for entry in trace] == list(CANONICAL_PICK_STEPS)
+    assert all(entry["status"] == "completed" for entry in trace)
     audit_text = "".join(path.read_text() for path in output.glob("agent_*.json"))
     assert "Authorization" not in audit_text
     assert "DEEPSEEK_API_KEY" not in audit_text

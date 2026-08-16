@@ -205,7 +205,11 @@ Every dispatched run adds `agent_request.json`, `agent_response.json`,
 `agent_generated_plan_trace.json` and `agent_result.json` to the normal run
 directory. The Python file is compiled from the already validated JSON plan,
 then AST-checked to allow only the canonical six `controller` calls and executed
-with no builtins against a recorder. Raw model-written Python is never executed.
+with no builtins against `SafeRobotController`. Each call is a one-shot gate for
+the corresponding real pipeline stage and blocks until that stage completes;
+missing, reordered or target-changing calls fail closed. Raw model-written
+Python is never executed. The terminal prints the generated `.py` path after
+every dispatched run.
 Authorization headers and API keys never enter these files. See
 [Agent architecture and safety](docs/agent_architecture.md).
 
