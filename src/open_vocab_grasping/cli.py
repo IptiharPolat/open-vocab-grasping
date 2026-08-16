@@ -165,6 +165,16 @@ def build_parser() -> argparse.ArgumentParser:
     agent.add_argument("--seed", type=int)
     agent.add_argument("--mode", choices=("deepseek", "mock", "deterministic"), default="deepseek")
     agent.add_argument("--instruction", help="Run one instruction and exit; omit for interactive mode")
+    agent_evaluate = subcommands.add_parser(
+        "agent-evaluate", help="Evaluate multilingual planning and optional full robot runs"
+    )
+    agent_evaluate.add_argument("--config", default="configs/agent_graspnet.yaml")
+    agent_evaluate.add_argument("--suite", default="configs/agent_instruction_suite.yaml")
+    agent_evaluate.add_argument(
+        "--mode", choices=("deepseek", "mock", "deterministic"), default="deepseek"
+    )
+    agent_evaluate.add_argument("--robot-cases-per-target", type=int, default=0)
+    agent_evaluate.add_argument("--seed-start", type=int, default=0)
     return parser
 
 
@@ -197,6 +207,19 @@ def main(argv: list[str] | None = None) -> int:
             print(json.dumps(execution.to_dict(), ensure_ascii=False, indent=2))
             return 0 if execution.success else 2
         return run_agent_repl(args.config, agent_seed, args.mode)
+    if args.command == "agent-evaluate":
+        from open_vocab_grasping.agent.evaluation import run_agent_evaluation
+
+        agent_config = load_config(args.config)
+        output, summary = run_agent_evaluation(
+            agent_config,
+            args.suite,
+            args.mode,
+            args.robot_cases_per_target,
+            args.seed_start,
+        )
+        print(json.dumps({"output": str(output), "summary": summary}, ensure_ascii=False, indent=2))
+        return 0
     config = load_config(args.config)
     seed = int(args.seed if getattr(args, "seed", None) is not None else config.get("seed", 0))
     if args.command == "capture":

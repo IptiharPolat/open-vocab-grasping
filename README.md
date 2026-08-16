@@ -220,6 +220,36 @@ pipeline retained four of 16 candidates and reached `DONE`. The mug lifted
 0.108188 m. See the [validated Agent result](outputs/20260814_122735_073119_run_seed0/agent_result.json)
 and [execution video](outputs/20260814_122735_073119_run_seed0/demo.mp4).
 
+### Agent reliability evaluation
+
+The fixed suite in `configs/agent_instruction_suite.yaml` contains 20 Chinese
+and English paraphrases: five each for mug, bottle, bowl and box. Planner-only
+evaluation measures schema validity, target accuracy, generated-Python validity,
+latency and tokens without starting PyBullet:
+
+```bash
+bash scripts/run_agent_evaluation.sh --mode deepseek --robot-cases-per-target 0
+```
+
+To additionally execute the first valid instruction for each target through
+real YOLO-World, official GraspNet and Panda, run:
+
+```bash
+bash scripts/run_agent_evaluation.sh --mode deepseek \
+  --robot-cases-per-target 1 --seed-start 0
+```
+
+The second command still sends all 20 planner requests but starts only four
+robot episodes. It produces `cases.csv`, `summary.json`, `summary.md` and one
+sanitized JSON audit per instruction. Planner-only accuracy and robot success
+are reported separately, and failures remain in their denominators. Hosted API
+usage may incur the provider's normal token charge.
+
+Infrastructure validation on 2026-08-16 used the explicitly labelled Mock
+planner: 18/20 plans passed because its small hand-written alias table does not
+understand “方块” or “纸盒”; four CPU geometric robot episodes then achieved 3/4.
+These numbers verify the evaluator and are not DeepSeek or GraspNet results.
+
 ## Interactive visual dashboard
 
 Start the local control room from the project terminal:

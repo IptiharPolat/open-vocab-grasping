@@ -1,0 +1,26 @@
+# Twenty fixed multilingual paraphrases. These are evaluation labels, not prompts
+# used by the perception or robot-selection pipeline.
+cases:
+  - {id: mug_zh_01, language: zh, instruction: "请帮我抓取桌面上的杯子", expected_target: mug}
+  - {id: mug_zh_02, language: zh, instruction: "麻烦把桌上的马克杯拿起来", expected_target: mug}
+  - {id: mug_zh_03, language: zh, instruction: "把那个杯子抓起来", expected_target: mug}
+  - {id: mug_en_01, language: en, instruction: "Pick up the mug from the table.", expected_target: mug}
+  - {id: mug_en_02, language: en, instruction: "Please grasp the mug.", expected_target: mug}
+
+  - {id: bottle_zh_01, language: zh, instruction: "请帮我抓取桌面上的瓶子", expected_target: bottle}
+  - {id: bottle_zh_02, language: zh, instruction: "把桌面上的瓶子拿起来", expected_target: bottle}
+  - {id: bottle_zh_03, language: zh, instruction: "抓一下那个瓶子", expected_target: bottle}
+  - {id: bottle_en_01, language: en, instruction: "Pick the bottle.", expected_target: bottle}
+  - {id: bottle_en_02, language: en, instruction: "Please pick up the bottle on the table.", expected_target: bottle}
+
+  - {id: bowl_zh_01, language: zh, instruction: "请帮我抓取桌面上的碗", expected_target: bowl}
+  - {id: bowl_zh_02, language: zh, instruction: "把碗拿起来", expected_target: bowl}
+  - {id: bowl_zh_03, language: zh, instruction: "抓取那个碗", expected_target: bowl}
+  - {id: bowl_en_01, language: en, instruction: "Pick up the bowl.", expected_target: bowl}
+  - {id: bowl_en_02, language: en, instruction: "Please grasp the bowl on the table.", expected_target: bowl}
+
+  - {id: box_zh_01, language: zh, instruction: "请帮我抓取桌面上的盒子", expected_target: box}
+  - {id: box_zh_02, language: zh, instruction: "把方块拿起来", expected_target: box}
+  - {id: box_zh_03, language: zh, instruction: "抓取那个纸盒", expected_target: box}
+  - {id: box_en_01, language: en, instruction: "Pick up the box.", expected_target: box}
+  - {id: box_en_02, language: en, instruction: "Please grasp the box on the table.", expected_target: box}

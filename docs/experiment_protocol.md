@@ -35,3 +35,19 @@ all failures. `open-vocab-graspnet` is executable through
 bottle, bowl and box (40 episodes total). The semantic-free `graspnet-only` mode is executable: target
 text is withheld from generation, filtering and ranking, and used only after
 selection to measure whether the requested object was lifted.
+
+## DeepSeek Agent protocol
+
+`configs/agent_instruction_suite.yaml` fixes 20 bilingual paraphrases before
+evaluation: five each for mug, bottle, bowl and box. Every case calls the selected
+planner once and records schema validity, target correctness, generated-Python
+AST/execution validity, reported tokens and planning latency. A planner failure
+or incorrect target remains in the denominator.
+
+`agent-evaluate` defaults to planner-only evaluation. With
+`--robot-cases-per-target N`, the first N labelled cases for each target also run
+through the normal Agent entry point using the already obtained response, so no
+second API call is made. These rows additionally require synchronized completion
+of all six `SafeRobotController` gates and record the downstream perception,
+GraspNet, planning and grasp outcome. Planner accuracy and robot success are
+reported separately; planner-only rows are never counted as successful grasps.

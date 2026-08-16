@@ -827,3 +827,33 @@ Final verification on 2026-08-15:
 - The Mock result is not a hosted DeepSeek claim and the geometric proposals are
   not GraspNet. Its purpose is to verify the new code-to-real-pipeline execution
   boundary without API cost or CUDA dependence.
+- A second actual regression used the same explicitly labelled Mock planner but
+  real YOLO-World and the official GraspNet checkpoint. The six synchronized
+  generated-code stages completed, Panda lifted the bottle 0.117293 m and reached
+  `DONE`. Artifact: `outputs/20260816_130458_513676_run_seed0/`. This validates
+  controller/GPU-backend compatibility, not hosted-LLM accuracy.
+
+## Multilingual Agent reliability evaluation infrastructure - 2026-08-16
+
+- Added a fixed 20-case bilingual suite with five paraphrases each for mug,
+  bottle, bowl and box. Added `agent-evaluate` and a launcher that record schema
+  validity, target accuracy, Python validation, latency, token usage and optional
+  full robot execution without making a second planner call.
+- Reports contain `cases.csv`, `summary.json`, `summary.md`, sanitized per-case
+  audits and an environment snapshot. Planner-only and robot-executed rates are
+  separate, and failures remain in the denominator.
+- Actual no-cost planner-only infrastructure run with the explicitly labelled
+  Mock planner produced 18/20 valid/correct plans. Its fixed alias table rejected
+  “方块” and “纸盒”; this limitation was retained. Artifact:
+  `outputs/20260816_130402_157039_agent_evaluation/`.
+- Actual Mock-planner plus real-YOLO/geometric-Panda evaluation requested four
+  robot episodes, executed all four and succeeded in three. Bowl seed 2 failed
+  with `no_accepted_candidate`. Artifact:
+  `outputs/20260816_130414_805882_agent_evaluation/`.
+- Neither run is claimed as DeepSeek or GraspNet reliability. The real 20-case
+  DeepSeek run and its four official-GraspNet robot cases require execution from
+  the user's terminal where `DEEPSEEK_API_KEY` is set; the Codex process cannot
+  access that shell-only credential.
+- Regression suite after the synchronized controller and Agent evaluator:
+  **63 passed in 3.58 s**. The launcher passes `bash -n`, all 20 suite cases load
+  with valid scene targets, Python sources compile, and `git diff --check` passes.

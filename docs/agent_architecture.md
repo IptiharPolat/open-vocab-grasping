@@ -102,3 +102,12 @@ code executes with an empty `__builtins__` mapping against `SafeRobotController`
 The real pipeline blocks at each stage until the generated call authorizes it,
 and completion releases the program to request the next step. Raw provider
 Python is never run.
+
+## Reliability suite
+
+The `agent-evaluate` command reads the fixed bilingual cases in
+`configs/agent_instruction_suite.yaml`. It writes one sanitized audit per case,
+`cases.csv`, JSON and Markdown summaries. Planner-only cases measure language,
+schema and generated-code behavior. An optional bounded number of cases per
+target reuses the same response to run the synchronized robot pipeline, avoiding
+duplicate API calls and keeping full-chain success separate from planner accuracy.
