@@ -20,11 +20,12 @@ the CPU geometric baseline and reports both successes and failures.
   65%（26/40；瓶子 9/10、杯子 6/10、盒子 6/10、碗 5/10），并将 14 次检测、
   候选和接触失败全部保留在统计中。
 - 接入真实 DeepSeek `deepseek-v4-flash` API 作为高层任务规划器，将中文指令转换为
-  受 JSON Schema、动作顺序和场景目标白名单约束的抓取计划；一次完整联合实验使用
-  310 tokens、1.358 秒规划，随后由真实 YOLO-World、官方 GraspNet 与 Panda 闭环
-  抓取瓶子并抬升 0.117293 m。系统保存脱敏的请求、响应、计划和执行审计记录，并将
-  计划编译为受 AST 白名单约束的 Python DSL，仅允许六个控制器动作，在无 builtins
-  记录器上验证后才调度机器人。
+  受 JSON Schema、动作顺序和场景目标白名单约束的抓取计划；在 20 条固定中英文
+  指令上实现计划有效率、目标解析准确率和 Python 校验率均为 100%，平均规划延迟
+  0.877 秒、总计 6,135 tokens。计划被自动编译为受 AST 白名单约束的六调用 Python
+  DSL，并通过无 builtins 的 `SafeRobotController` 与真实流水线逐阶段同步；每类一次
+  的 DeepSeek + YOLO-World + 官方 GraspNet + Panda 联合实验达到 4/4 成功。该小样本
+  与独立 40 次抓取基准的 65% 成功率分开报告。
 
 ## English CV description
 
@@ -45,11 +46,13 @@ YOLO-World, Open3D, PyTorch**
   IK reachability 87.5%, and end-to-end success 65% (26/40), with every failure retained.
 - Integrated the real DeepSeek `deepseek-v4-flash` API as a high-level planner,
   validating Chinese-command plans against a JSON Schema, fixed action sequence,
-  and scene-target allowlist before dispatch. A fully combined 310-token,
-  1.358-second planning call drove real YOLO-World, the official GraspNet
-  checkpoint and Panda control to lift the bottle by 0.117293 m, with redacted
-  audit artifacts. Compiled each validated plan to an AST-whitelisted six-call
-  Python DSL before dispatch; raw model Python is never executed.
+  and scene-target allowlist before dispatch. Across 20 fixed Chinese/English
+  instructions, plan validity, target accuracy and generated-Python validity were
+  all 100%, with 0.877-second mean latency and 6,135 total tokens. Compiled each
+  plan to an AST-whitelisted six-call Python DSL whose `SafeRobotController`
+  synchronizes every real pipeline stage; four bounded DeepSeek + YOLO-World +
+  official-GraspNet + Panda trials succeeded 4/4. This small integration sample
+  is reported separately from the 26/40 fixed-seed grasp benchmark.
 
 ## Two-minute portfolio walkthrough
 
@@ -60,5 +63,6 @@ YOLO-World, Open3D, PyTorch**
    `candidates.json` to show perception, association and rejection traces.
 4. Open the 40-row GraspNet `episodes.csv`, then explain 26 successes and the
    14 retained failures using `docs/failure_analysis.md`.
-5. Show `agent_generated_plan.py` and its AST trace, then finish with the concrete
-   RGB-D/SO-ARM101 calibration and controller migration plan.
+5. Show `agent_generated_plan.py`, its synchronized stage trace, and the 20-case
+   DeepSeek `cases.csv`; finish by distinguishing 4/4 bounded integration from
+   the 26/40 fixed-seed grasp benchmark.

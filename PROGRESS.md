@@ -444,8 +444,11 @@ Final natural-language run artifacts:
 
 The original CPU stages remain reproducible. Official GraspNet neural inference
 has since been validated on the host RTX 3050 and integrated/evaluated above.
-Remaining external work is calibrated execution on a real RGB-D camera/SO-ARM101
-and domain-gap improvement for the mug/bowl/box assets.
+Remaining work inside the current Panda-simulation scope is domain-gap and
+contact-reliability improvement for the mug/bowl/box assets. The earlier
+SO-ARM101 migration note is retained only as historical design material; the
+user has assigned that hardware to a separate project, so it is not an
+unfinished deliverable here.
 
 ## Interactive visual dashboard - verified on CPU
 
@@ -857,3 +860,28 @@ Final verification on 2026-08-15:
 - Regression suite after the synchronized controller and Agent evaluator:
   **63 passed in 3.58 s**. The launcher passes `bash -n`, all 20 suite cases load
   with valid scene targets, Python sources compile, and `git diff --check` passes.
+
+## Real multilingual DeepSeek and bounded full-chain reliability run - 2026-08-16
+
+- The user executed `scripts/run_agent_evaluation.sh --mode deepseek
+  --robot-cases-per-target 1 --seed-start 0` from the `ovg` terminal containing
+  the shell-only key. All 20 hosted requests returned HTTP 200 from
+  `deepseek-v4-flash`; no credential-like value appears in the evaluation or its
+  four source-run artifacts.
+- Across the fixed 12 Chinese and eight English cases, schema-valid plan rate,
+  labelled target accuracy and generated-Python validation were each **20/20
+  (100%)**. Mean API planning latency was 0.876628 s and total reported usage was
+  6,135 tokens. There were no planning failures.
+- Four cases requested full execution, one per class. All four used real
+  YOLO-World, `official_graspnet_checkpoint_rs`, `SafeRobotController` stage
+  gating and no simulation truth for semantic selection; all four reached
+  `DONE`. Lifts: mug seed 0 0.098600 m, bottle seed 1 0.117607 m, bowl seed 2
+  0.114215 m and box seed 3 0.116835 m.
+- Evaluation artifact: `outputs/20260816_133053_957394_agent_evaluation/`.
+  Source runs: `outputs/20260816_133055_044631_run_seed0/`,
+  `outputs/20260816_133116_668199_run_seed1/`,
+  `outputs/20260816_133134_176548_run_seed2/`, and
+  `outputs/20260816_133150_905697_run_seed3/`.
+- Statistical boundary: the 4/4 robot result is a bounded integration sample
+  with one seed per class, not a replacement for the independently measured
+  official-GraspNet reliability of **26/40 (65%)** over ten seeds per class.

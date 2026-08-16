@@ -45,3 +45,15 @@ PyBullet RGB-D through a versioned NPZ boundary. The current four-class benchmar
 ran 40 fixed seeds and reached 38/40 detections, 35/40 IK-reachable episodes and
 26/40 end-to-end successes. Nine executed grasps still failed to lift, exposing a
 real contact/domain gap rather than substituting the geometric baseline.
+
+## 6. Did the LLM really generate and execute robot-planning Python?
+
+DeepSeek produces a schema-constrained semantic plan rather than arbitrary code.
+The system compiles that validated plan into a six-call Python DSL, rejects any
+AST containing imports, builtins, extra calls, reordered stages or a changed
+target, and executes it with no builtins against `SafeRobotController`. Each call
+blocks until the matching real perception/planning/execution stage completes, so
+the Python is an auditable stage program rather than a decorative file. In a
+fixed 20-instruction bilingual evaluation, all plans, targets and programs were
+valid; four bounded real-YOLO/official-GraspNet robot trials succeeded. I keep
+that 4/4 sample separate from the broader 26/40 downstream grasp benchmark.

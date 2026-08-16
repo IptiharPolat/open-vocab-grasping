@@ -19,9 +19,11 @@ The optional terminal Agent adds a DeepSeek high-level planner for Chinese or
 English commands. Its output is JSON-Schema validated and dispatched only to the
 existing grasp pipeline; it cannot execute arbitrary Python or shell commands.
 The fully combined path—real `deepseek-v4-flash`, real YOLO-World, the official
-GraspNet checkpoint and Panda execution—was verified in one seed-0 bottle run on
-2026-08-15. It reached `DONE` and lifted the bottle 0.117293 m without using
-simulator truth for semantic selection.
+GraspNet checkpoint and Panda execution—has also been batch-audited. A fixed
+20-instruction bilingual suite reached 20/20 schema-valid plans, 20/20 correct
+targets and 20/20 valid generated programs; four bounded robot trials (one per
+class) reached 4/4. This small Agent sample complements, but does not replace,
+the harder 40-seed downstream benchmark at 26/40.
 
 ![Verified real YOLO-World and official GraspNet bottle grasp](outputs/20260814_153729_431593_run_seed0/demo.gif)
 
@@ -57,7 +59,7 @@ metrics, physics queries and success evaluation. See the full
 | Randomized Panda tabletop scene, fixed RGB-D camera, RGB/depth/instance capture | CPU verified |
 | OpenGL depth conversion, point cloud, projection and frame transforms | CPU verified and unit-tested |
 | Deterministic command parser, JSON Schema and action whitelist | CPU verified |
-| Terminal DeepSeek Agent, plan validation and audit logs | Real `deepseek-v4-flash` + official GraspNet E2E verified |
+| Terminal DeepSeek Agent, plan validation and audit logs | 20/20 real API plans; 4/4 bounded full-chain trials |
 | YOLOv8s-World-v2 dynamic text detection and raw/overlay output | Real model, CPU verified |
 | Scene-wide geometric candidate generation and semantic/depth association | CPU verified; not GraspNet |
 | Table/cloud/workspace/width/approach/IK/trajectory filtering | CPU verified |
@@ -249,6 +251,17 @@ Infrastructure validation on 2026-08-16 used the explicitly labelled Mock
 planner: 18/20 plans passed because its small hand-written alias table does not
 understand “方块” or “纸盒”; four CPU geometric robot episodes then achieved 3/4.
 These numbers verify the evaluator and are not DeepSeek or GraspNet results.
+
+The real run at `outputs/20260816_133053_957394_agent_evaluation/` received 20/20
+successful `deepseek-v4-flash` responses, valid plans, correct targets and valid
+generated programs across 12 Chinese and eight English cases. Mean planning
+latency was 0.877 s and total reported usage was 6,135 tokens. The four requested
+robot trials all used real YOLO-World, the official GraspNet checkpoint and
+stage-gated generated Python; all four reached `DONE`. Lift was 0.098600 m for
+mug, 0.117607 m for bottle, 0.114215 m for bowl and 0.116835 m for box. This 4/4
+is a bounded integration sample, not a replacement for the 26/40 fixed-seed
+grasp reliability benchmark. See [cases.csv](outputs/20260816_133053_957394_agent_evaluation/cases.csv)
+and the [summary](outputs/20260816_133053_957394_agent_evaluation/summary.md).
 
 ## Interactive visual dashboard
 
@@ -470,11 +483,11 @@ state; see [troubleshooting](docs/troubleshooting.md) for alternatives.
 debug/upper-bound mode. Open-vocabulary reports use real detector output and
 preserve zero-detection episodes as failures.
 
-## Portfolio and real-robot follow-up
+## Portfolio and scope
 
 - [Chinese resume and English CV descriptions](docs/portfolio.md)
 - [Implementation-based interview questions](docs/interview_questions.md)
-- [Real RGB-D and SO-ARM101 migration plan](docs/real_robot_migration.md)
+- [Archived SO-ARM101 migration analysis (separate project; out of scope)](docs/real_robot_migration.md)
 - [Troubleshooting guide](docs/troubleshooting.md)
 
 For commercial reuse, review every upstream license—especially Ultralytics and

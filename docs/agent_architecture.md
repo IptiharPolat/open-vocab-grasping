@@ -111,3 +111,11 @@ The `agent-evaluate` command reads the fixed bilingual cases in
 schema and generated-code behavior. An optional bounded number of cases per
 target reuses the same response to run the synchronized robot pipeline, avoiding
 duplicate API calls and keeping full-chain success separate from planner accuracy.
+
+The actual 2026-08-16 run received 20 successful `deepseek-v4-flash` responses:
+20/20 plans passed schema validation, 20/20 selected the labelled target and
+20/20 generated programs passed validation. Mean planning latency was 0.877 s
+with 6,135 total tokens. Four requested robot rows used real YOLO-World and the
+official checkpoint and succeeded 4/4. This is a bounded one-case-per-class
+integration check; downstream physical reliability remains the separate 26/40
+fixed-seed benchmark.

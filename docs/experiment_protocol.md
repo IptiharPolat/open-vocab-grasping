@@ -51,3 +51,9 @@ second API call is made. These rows additionally require synchronized completion
 of all six `SafeRobotController` gates and record the downstream perception,
 GraspNet, planning and grasp outcome. Planner accuracy and robot success are
 reported separately; planner-only rows are never counted as successful grasps.
+
+The first real run used all 20 fixed instructions and one full robot case per
+target. It returned 20/20 valid plans, targets and generated programs, then 4/4
+successful full-chain executions. Because only one robot seed was used per class,
+that 4/4 is integration evidence rather than a general grasp success estimate;
+the 40-seed official-GraspNet benchmark remains the reliability reference.

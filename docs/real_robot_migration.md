@@ -1,5 +1,10 @@
 # Migration to a real RGB-D camera and SO-ARM101
 
+> Scope note (2026-08-16): this document is retained as an archived engineering
+> analysis only. The current project ends at the Franka Panda PyBullet system;
+> SO-ARM101 is reserved for a separate project and is not a pending milestone or
+> a capability claimed by this repository.
+
 The perception and ranking contracts can be retained, but simulator-specific
 observation, kinematics and safety code must be replaced. This is engineering
 work, not a configuration-only switch.
