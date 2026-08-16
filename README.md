@@ -19,11 +19,11 @@ The optional terminal Agent adds a DeepSeek high-level planner for Chinese or
 English commands. Its output is JSON-Schema validated and dispatched only to the
 existing grasp pipeline; it cannot execute arbitrary Python or shell commands.
 The fully combined path—real `deepseek-v4-flash`, real YOLO-World, the official
-GraspNet checkpoint and Panda execution—has also been batch-audited. A fixed
-20-instruction bilingual suite reached 20/20 schema-valid plans, 20/20 correct
-targets and 20/20 valid generated programs; four bounded robot trials (one per
-class) reached 4/4. This small Agent sample complements, but does not replace,
-the harder 40-seed downstream benchmark at 26/40.
+GraspNet checkpoint and Panda execution—has also been run for all 40 fixed-seed
+scenes. DeepSeek returned 40/40 schema-valid plans, correct targets and valid
+generated programs; all 40 stage-gated robot tasks executed and **26/40 (65%)**
+succeeded. The 14 failures were entirely downstream: one detector miss, four
+no-accepted-candidate cases and nine failed lifts.
 
 ![Verified real YOLO-World and official GraspNet bottle grasp](outputs/20260814_153729_431593_run_seed0/demo.gif)
 
@@ -59,7 +59,7 @@ metrics, physics queries and success evaluation. See the full
 | Randomized Panda tabletop scene, fixed RGB-D camera, RGB/depth/instance capture | CPU verified |
 | OpenGL depth conversion, point cloud, projection and frame transforms | CPU verified and unit-tested |
 | Deterministic command parser, JSON Schema and action whitelist | CPU verified |
-| Terminal DeepSeek Agent, plan validation and audit logs | 20/20 real API plans; 4/4 bounded full-chain trials |
+| Terminal DeepSeek Agent, plan validation and audit logs | 40/40 real API plans; 26/40 true full-chain success |
 | YOLOv8s-World-v2 dynamic text detection and raw/overlay output | Real model, CPU verified |
 | Scene-wide geometric candidate generation and semantic/depth association | CPU verified; not GraspNet |
 | Table/cloud/workspace/width/approach/IK/trajectory filtering | CPU verified |
@@ -263,20 +263,30 @@ is a bounded integration sample, not a replacement for the 26/40 fixed-seed
 grasp reliability benchmark. See [cases.csv](outputs/20260816_133053_957394_agent_evaluation/cases.csv)
 and the [summary](outputs/20260816_133053_957394_agent_evaluation/summary.md).
 
-To measure the true 40-episode Agent success rate, call DeepSeek separately for
-every scene and pair the seeds with the existing downstream benchmark:
+The true 40-episode Agent benchmark is reproduced with:
 
 ```bash
 bash scripts/run_agent_evaluation.sh --mode deepseek \
   --full-episodes-per-target 10 --seed-start 0
 ```
 
-This executes 40 hosted requests and 40 full robot episodes: mug seeds 0-9,
+The actual run at `outputs/20260816_140225_904008_agent_evaluation/` executed 40
+hosted requests and 40 full robot episodes: mug seeds 0-9,
 bottle 10-19, bowl 20-29 and box 30-39. Each target rotates through its five
 fixed bilingual paraphrases twice. Planning/schema/target failures, rejected
 generated Python and robot runtime failures all remain in the full-chain
-denominator. The command uses the provider's normal token balance and can take
-several minutes on the isolated RTX 3050 GraspNet service.
+denominator. DeepSeek achieved 40/40 valid plans, correct targets and valid
+programs at 0.861 s mean latency with 12,267 tokens. Full-chain success was
+26/40: bottle 9/10, mug 6/10, box 6/10 and bowl 5/10. All target/seed outcomes
+and failure reasons exactly matched the paired no-LLM downstream benchmark,
+showing that the Agent added no failures in this suite. See the
+[40-case CSV](outputs/20260816_140225_904008_agent_evaluation/cases.csv) and
+[summary](outputs/20260816_140225_904008_agent_evaluation/summary.md).
+
+The apparent English 7/16 versus Chinese 19/24 robot split is not a language
+effect: instruction languages were assigned to different deterministic seeds,
+while language planning accuracy was 100% for both. A causal language comparison
+would require running every paraphrase on the same paired scenes.
 
 ## Interactive visual dashboard
 

@@ -125,3 +125,12 @@ predeclared paraphrases for each target over deterministic paired seeds and make
 a fresh hosted request for every robot scene. Its reported full-chain rate uses
 all requested cases as the denominator, including any plan or validation failure
 that safely prevents robot motion.
+
+The actual 40-case run returned 40/40 valid `deepseek-v4-flash` plans, correct
+targets and valid generated programs at 0.861 s mean latency and 12,267 tokens.
+All 40 synchronized robot tasks executed with real YOLO-World and the official
+checkpoint; 26 succeeded. Its target/seed successes and failure reasons exactly
+matched the paired downstream benchmark, so DeepSeek introduced no additional
+failure in this fixed suite. English and Chinese robot success rates must not be
+compared causally because their paraphrases were assigned to different seeds;
+planner correctness was 100% for both languages.

@@ -6,6 +6,14 @@ and box in `open-vocab-graspnet`. No successful episode was selected or repeated
 to replace a failure. The earlier 20-episode 6/20 result remains in
 `PROGRESS.md` as the pre-improvement baseline.
 
+The true Agent source is
+`outputs/20260816_140225_904008_agent_evaluation/cases.csv`: all 40 scenes made
+a fresh real DeepSeek call before the same downstream pipeline. DeepSeek plan,
+target and generated-code validity were 40/40, while full-chain success was
+26/40. A target/seed comparison found every success and failure reason identical
+to this downstream benchmark, so the failure table below also describes the
+complete Agent run.
+
 ## Measured results
 
 | Target | Episodes | Detection | YOLO target selection | IK reachable | End-to-end |

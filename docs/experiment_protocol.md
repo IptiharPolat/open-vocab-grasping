@@ -66,3 +66,10 @@ new planner request and, only after safe validation, attempts one robot episode.
 The end-to-end denominator is all 40 requested cases: planner errors, incorrect
 targets, code-validation failures and runtime exceptions count as failures even
 when physical motion never starts.
+
+The actual full run completed all 40 hosted calls and robot attempts. Planning,
+target selection at the Agent layer and generated-code validation were 40/40;
+robot task success was 26/40. Per target and per seed, success/failure labels and
+failure reasons exactly matched the paired downstream-only benchmark. Language
+groups are descriptive only because instruction language is confounded with seed;
+a language-effect study would repeat every paraphrase on identical scenes.

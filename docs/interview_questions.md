@@ -54,6 +54,8 @@ AST containing imports, builtins, extra calls, reordered stages or a changed
 target, and executes it with no builtins against `SafeRobotController`. Each call
 blocks until the matching real perception/planning/execution stage completes, so
 the Python is an auditable stage program rather than a decorative file. In a
-fixed 20-instruction bilingual evaluation, all plans, targets and programs were
-valid; four bounded real-YOLO/official-GraspNet robot trials succeeded. I keep
-that 4/4 sample separate from the broader 26/40 downstream grasp benchmark.
+true 40-call bilingual evaluation, all plans, targets and programs were valid;
+all 40 real-YOLO/official-GraspNet robot tasks executed and 26 succeeded. The
+paired target/seed outcomes exactly matched the downstream-only benchmark, so
+the LLM introduced no additional failure; the remaining bottleneck was physical
+perception, proposal filtering and contact execution.

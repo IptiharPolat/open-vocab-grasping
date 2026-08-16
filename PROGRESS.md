@@ -902,6 +902,30 @@ Final verification on 2026-08-15:
   YOLO/geometric Panda backend succeeded 3/4 and retained bowl's
   `no_accepted_candidate`. Artifact:
   `outputs/20260816_135857_061732_agent_evaluation/`.
-- Regression suite: **64 passed in 3.58 s**. The true 40-case hosted run remains
-  to be launched from the user's key-bearing terminal with
-  `--full-episodes-per-target 10`.
+- Regression suite at this implementation checkpoint: **64 passed in 3.58 s**.
+  The hosted run still required the user's key-bearing terminal at that moment;
+  it was subsequently completed and is recorded below.
+
+## True 40-case DeepSeek full-chain benchmark - 2026-08-16
+
+- The user executed the full benchmark from the key-bearing `ovg` terminal.
+  Artifact: `outputs/20260816_140225_904008_agent_evaluation/`.
+- All **40/40** hosted `deepseek-v4-flash` requests returned HTTP 200. Schema-valid
+  plan rate, labelled target accuracy and generated-Python validation were each
+  100%. Mean planning latency was 0.861097 s and reported usage was 12,267 tokens.
+- All 40 robot tasks executed through `SafeRobotController`, real YOLO-World and
+  `official_graspnet_checkpoint_rs`; no simulation truth entered semantic
+  selection. Every source run retains its generated Python, synchronized trace
+  and MP4. No credential-like value was found in the evaluation artifacts.
+- True full-chain success was **26/40 (65%)**: bottle 9/10, mug 6/10, box 6/10
+  and bowl 5/10. Failures: one `detection_failed`, four
+  `no_accepted_candidate`, and nine `object_not_lifted`.
+- The new Agent run was paired against
+  `outputs/20260815_001417_040250_evaluation/episodes.csv`. All 40 target/seed
+  success values and normalized failure reasons were identical. DeepSeek
+  introduced zero failures in this suite; the full-chain limit is downstream.
+- English robot success was 7/16 and Chinese 19/24, but these are not evidence
+  of a language effect because language variants were assigned to different
+  deterministic seeds. Both languages had 100% plan/target/code validity.
+- Final regression after recording the real benchmark: **64 passed in 3.71 s**;
+  `git diff --check` passes.
