@@ -97,6 +97,39 @@ def load_instruction_suite(path: str | Path, available_targets: list[str]) -> li
     return cases
 
 
+def expand_full_chain_cases(
+    cases: list[dict[str, str]],
+    targets: list[str],
+    episodes_per_target: int,
+    seed_start: int,
+) -> list[dict[str, Any]]:
+    """Pair every target with deterministic seeds and round-robin instructions."""
+    if episodes_per_target <= 0:
+        raise ValueError("episodes_per_target must be positive")
+    grouped = {
+        target: [case for case in cases if case["expected_target"] == target]
+        for target in targets
+    }
+    missing = [target for target, target_cases in grouped.items() if not target_cases]
+    if missing:
+        raise ValueError(f"Instruction suite has no cases for targets: {missing}")
+    expanded: list[dict[str, Any]] = []
+    for target_index, target in enumerate(targets):
+        target_cases = grouped[target]
+        for episode_index in range(episodes_per_target):
+            template = target_cases[episode_index % len(target_cases)]
+            expanded.append(
+                {
+                    **template,
+                    "id": f"{target}_full_{episode_index:02d}",
+                    "source_case_id": template["id"],
+                    "episode_index": episode_index,
+                    "seed": seed_start + target_index * episodes_per_target + episode_index,
+                }
+            )
+    return expanded
+
+
 def _rate(rows: list[dict[str, Any]], field: str) -> float | None:
     values = [bool(row[field]) for row in rows if row.get(field) is not None]
     return mean(values) if values else None
@@ -105,6 +138,7 @@ def _rate(rows: list[dict[str, Any]], field: str) -> float | None:
 def _group_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
     valid_rows = [row for row in rows if row["plan_valid"]]
     executed = [row for row in rows if row["robot_executed"]]
+    requested = [row for row in rows if row["robot_requested"]]
     latencies = [float(row["planning_latency_s"]) for row in valid_rows]
     return {
         "cases": len(rows),
@@ -120,6 +154,11 @@ def _group_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "robot_executed_count": len(executed),
         "robot_success_count": sum(bool(row["robot_success"]) for row in executed),
         "robot_success_rate": _rate(executed, "robot_success"),
+        "full_chain_success_count": sum(bool(row.get("robot_success")) for row in requested),
+        "full_chain_success_rate": (
+            mean(bool(row.get("robot_success")) for row in requested) if requested else None
+        ),
+        "robot_not_executed_count": sum(not bool(row["robot_executed"]) for row in requested),
     }
 
 
@@ -153,7 +192,7 @@ def summarize_agent_cases(rows: list[dict[str, Any]], mode: str) -> dict[str, An
                 Counter(
                     str(row["robot_failure_reason"])
                     for row in rows
-                    if row.get("robot_executed") and row.get("robot_failure_reason")
+                    if row.get("robot_requested") and row.get("robot_failure_reason")
                 ).items()
             )
         ),
@@ -188,18 +227,20 @@ def agent_summary_markdown(summary: dict[str, Any]) -> str:
         f"- Mean planning latency: {latency_text}",
         f"- Robot success among executed cases: {overall['robot_success_count']}/"
         f"{overall['robot_executed_count']} ({pct(overall['robot_success_rate'])})",
+        f"- Full-chain success among requested cases: {overall['full_chain_success_count']}/"
+        f"{overall['robot_requested_count']} ({pct(overall['full_chain_success_rate'])})",
         "",
         "## By target",
         "",
-        "| Target | Cases | Valid plan | Target accuracy | Python valid | Robot success |",
+        "| Target | Cases | Valid plan | Target accuracy | Python valid | Full-chain success |",
         "| --- | ---: | ---: | ---: | ---: | ---: |",
     ]
     for target, values in summary["by_target"].items():
         lines.append(
             f"| {target} | {values['cases']} | {pct(values['valid_plan_rate'])} | "
             f"{pct(values['target_accuracy'])} | {pct(values['python_valid_rate'])} | "
-            f"{values['robot_success_count']}/{values['robot_executed_count']} "
-            f"({pct(values['robot_success_rate'])}) |"
+            f"{values['full_chain_success_count']}/{values['robot_requested_count']} "
+            f"({pct(values['full_chain_success_rate'])}) |"
         )
     lines.extend(
         [
@@ -207,8 +248,8 @@ def agent_summary_markdown(summary: dict[str, Any]) -> str:
             "## Interpretation boundary",
             "",
             "Planner-only cases validate language understanding, schema compliance and generated-code safety. "
-            "Only rows with `robot_executed=true` are full perception-to-motion experiments; the two rates "
-            "must not be conflated.",
+            "Rows with `robot_requested=true` form the full-chain denominator; planning, target or runtime "
+            "failures that prevent execution still count as end-to-end failures.",
             "",
             "All values are computed from `cases.csv`; failed cases remain in the denominator.",
             "",
@@ -223,26 +264,43 @@ def run_agent_evaluation(
     mode: str,
     robot_cases_per_target: int = 0,
     seed_start: int = 0,
+    full_episodes_per_target: int = 0,
     *,
     planner: Planner | None = None,
 ) -> tuple[Path, dict[str, Any]]:
     if robot_cases_per_target < 0:
         raise ValueError("robot_cases_per_target must be non-negative")
+    if full_episodes_per_target < 0:
+        raise ValueError("full_episodes_per_target must be non-negative")
+    if robot_cases_per_target and full_episodes_per_target:
+        raise ValueError(
+            "robot_cases_per_target and full_episodes_per_target are mutually exclusive"
+        )
     targets = [str(target) for target in config["scene"]["object_names"]]
-    cases = load_instruction_suite(suite_path, targets)
+    suite_cases = load_instruction_suite(suite_path, targets)
+    cases: list[dict[str, Any]] = (
+        expand_full_chain_cases(
+            suite_cases, targets, full_episodes_per_target, seed_start
+        )
+        if full_episodes_per_target
+        else list(suite_cases)
+    )
     selected_planner = planner or build_planner(mode, config)
     project = Path(config["_config_path"]).parent.parent
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
     output = project / config.get("output_root", "outputs") / f"{timestamp}_agent_evaluation"
     (output / "cases").mkdir(parents=True, exist_ok=False)
 
-    selected_for_robot: set[str] = set()
+    selected_for_robot: set[str] = (
+        {str(case["id"]) for case in cases} if full_episodes_per_target else set()
+    )
     selected_counts: Counter[str] = Counter()
-    for case in cases:
-        target = case["expected_target"]
-        if selected_counts[target] < robot_cases_per_target:
-            selected_for_robot.add(case["id"])
-            selected_counts[target] += 1
+    if not full_episodes_per_target:
+        for case in cases:
+            target = case["expected_target"]
+            if selected_counts[target] < robot_cases_per_target:
+                selected_for_robot.add(case["id"])
+                selected_counts[target] += 1
 
     rows: list[dict[str, Any]] = []
     robot_seed_index = 0
@@ -264,7 +322,7 @@ def run_agent_evaluation(
             "robot_executed": False,
             "robot_success": None,
             "robot_failure_reason": None,
-            "seed": None,
+            "seed": case.get("seed"),
             "source_output": None,
             "error_type": None,
             "error_message": None,
@@ -299,8 +357,12 @@ def run_agent_evaluation(
                 }
             )
             if row["robot_requested"] and row["target_correct"]:
-                seed = seed_start + robot_seed_index
-                robot_seed_index += 1
+                if case.get("seed") is not None:
+                    seed = int(case["seed"])
+                else:
+                    seed = seed_start + robot_seed_index
+                    robot_seed_index += 1
+                row["robot_executed"] = True
                 execution: AgentExecution = run_agent_instruction(
                     config,
                     case["instruction"],
@@ -310,7 +372,6 @@ def run_agent_evaluation(
                 )
                 row.update(
                     {
-                        "robot_executed": True,
                         "robot_success": execution.success,
                         "robot_failure_reason": execution.robot_result.get("failure_reason"),
                         "seed": seed,
@@ -323,6 +384,10 @@ def run_agent_evaluation(
         except Exception as exc:
             row["error_type"] = type(exc).__name__
             row["error_message"] = str(exc)
+            if row["robot_requested"] and row["robot_failure_reason"] is None:
+                row["robot_failure_reason"] = (
+                    "robot_runtime_exception" if row["robot_executed"] else "planning_or_validation_failed"
+                )
             case_audit["error"] = {"type": type(exc).__name__, "message": str(exc)}
         rows.append(row)
         (output / "cases" / f"{case['id']}.json").write_text(
@@ -332,6 +397,7 @@ def run_agent_evaluation(
     summary = summarize_agent_cases(rows, mode)
     summary["suite_path"] = str(Path(suite_path).expanduser().resolve())
     summary["robot_cases_per_target"] = robot_cases_per_target
+    summary["full_episodes_per_target"] = full_episodes_per_target
     summary["seed_start"] = seed_start
     with (output / "cases.csv").open("w", newline="", encoding="utf-8") as stream:
         writer = csv.DictWriter(stream, fieldnames=FIELDS)

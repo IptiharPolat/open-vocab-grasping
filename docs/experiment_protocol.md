@@ -57,3 +57,12 @@ target. It returned 20/20 valid plans, targets and generated programs, then 4/4
 successful full-chain executions. Because only one robot seed was used per class,
 that 4/4 is integration evidence rather than a general grasp success estimate;
 the 40-seed official-GraspNet benchmark remains the reliability reference.
+
+For a true 40-case Agent benchmark, `--full-episodes-per-target 10 --seed-start
+0` expands the suite before calling the planner. Target index `t` and episode
+index `e` receive seed `0 + t*10 + e`, exactly matching the downstream benchmark:
+mug 0-9, bottle 10-19, bowl 20-29 and box 30-39. Every expanded case makes one
+new planner request and, only after safe validation, attempts one robot episode.
+The end-to-end denominator is all 40 requested cases: planner errors, incorrect
+targets, code-validation failures and runtime exceptions count as failures even
+when physical motion never starts.

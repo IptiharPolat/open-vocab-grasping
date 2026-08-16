@@ -885,3 +885,23 @@ Final verification on 2026-08-15:
 - Statistical boundary: the 4/4 robot result is a bounded integration sample
   with one seed per class, not a replacement for the independently measured
   official-GraspNet reliability of **26/40 (65%)** over ten seeds per class.
+
+## True 40-case Agent benchmark support - 2026-08-16
+
+- Added `--full-episodes-per-target N`. Unlike the earlier 20-plan/four-robot
+  protocol, it expands every target to N complete cases, makes one new planner
+  request per scene and executes one robot episode after validation.
+- Seed pairing matches the existing downstream benchmark exactly. For N=10 and
+  seed start 0: mug uses 0-9, bottle 10-19, bowl 20-29 and box 30-39. Each target's
+  five fixed bilingual instructions is used twice.
+- Added an explicit full-chain rate whose denominator is every requested case.
+  Planner exceptions, target mismatches, generated-code validation failures and
+  robot runtime exceptions cannot disappear merely because motion did not start.
+- Actual no-cost full-mode regression with the labelled Mock planner used one
+  episode per target and seeds 0-3. All four plans/code paths executed; the real
+  YOLO/geometric Panda backend succeeded 3/4 and retained bowl's
+  `no_accepted_candidate`. Artifact:
+  `outputs/20260816_135857_061732_agent_evaluation/`.
+- Regression suite: **64 passed in 3.58 s**. The true 40-case hosted run remains
+  to be launched from the user's key-bearing terminal with
+  `--full-episodes-per-target 10`.

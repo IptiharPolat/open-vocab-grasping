@@ -173,7 +173,14 @@ def build_parser() -> argparse.ArgumentParser:
     agent_evaluate.add_argument(
         "--mode", choices=("deepseek", "mock", "deterministic"), default="deepseek"
     )
-    agent_evaluate.add_argument("--robot-cases-per-target", type=int, default=0)
+    agent_robot_scope = agent_evaluate.add_mutually_exclusive_group()
+    agent_robot_scope.add_argument("--robot-cases-per-target", type=int, default=0)
+    agent_robot_scope.add_argument(
+        "--full-episodes-per-target",
+        type=int,
+        default=0,
+        help="Call the planner and execute the robot N times per target with paired seeds",
+    )
     agent_evaluate.add_argument("--seed-start", type=int, default=0)
     return parser
 
@@ -217,6 +224,7 @@ def main(argv: list[str] | None = None) -> int:
             args.mode,
             args.robot_cases_per_target,
             args.seed_start,
+            args.full_episodes_per_target,
         )
         print(json.dumps({"output": str(output), "summary": summary}, ensure_ascii=False, indent=2))
         return 0

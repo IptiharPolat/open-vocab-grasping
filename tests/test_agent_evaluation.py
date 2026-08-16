@@ -7,6 +7,7 @@ from typing import Any
 
 from open_vocab_grasping.agent.deepseek_client import PlannerResponse
 from open_vocab_grasping.agent.evaluation import (
+    expand_full_chain_cases,
     load_instruction_suite,
     run_agent_evaluation,
     summarize_agent_cases,
@@ -45,6 +46,30 @@ def test_load_instruction_suite_validates_cases(tmp_path: Path) -> None:
         encoding="utf-8",
     )
     assert load_instruction_suite(suite, ["mug"])[0]["id"] == "one"
+
+
+def test_full_chain_expansion_uses_paired_target_seed_formula() -> None:
+    cases = [
+        {"id": "mug_a", "language": "zh", "instruction": "抓杯子", "expected_target": "mug"},
+        {"id": "mug_b", "language": "en", "instruction": "pick mug", "expected_target": "mug"},
+        {
+            "id": "bottle_a",
+            "language": "zh",
+            "instruction": "抓瓶子",
+            "expected_target": "bottle",
+        },
+    ]
+    expanded = expand_full_chain_cases(cases, ["mug", "bottle"], 3, 10)
+    assert [case["seed"] for case in expanded] == [10, 11, 12, 13, 14, 15]
+    assert [case["source_case_id"] for case in expanded[:3]] == ["mug_a", "mug_b", "mug_a"]
+    assert [case["expected_target"] for case in expanded] == [
+        "mug",
+        "mug",
+        "mug",
+        "bottle",
+        "bottle",
+        "bottle",
+    ]
 
 
 def test_agent_evaluation_writes_real_rows_and_summary(tmp_path: Path) -> None:
@@ -119,3 +144,6 @@ def test_summary_keeps_wrong_target_in_denominator() -> None:
     summary = summarize_agent_cases(rows, "deepseek")
     assert summary["overall"]["target_accuracy"] == 0.5
     assert summary["overall"]["robot_executed_count"] == 0
+    assert summary["overall"]["full_chain_success_rate"] == 0.0
+    assert summary["overall"]["robot_not_executed_count"] == 1
+    assert summary["robot_failure_distribution"] == {"skipped_target_mismatch": 1}

@@ -119,3 +119,9 @@ with 6,135 total tokens. Four requested robot rows used real YOLO-World and the
 official checkpoint and succeeded 4/4. This is a bounded one-case-per-class
 integration check; downstream physical reliability remains the separate 26/40
 fixed-seed benchmark.
+
+The full benchmark mode uses `--full-episodes-per-target`. It cycles the five
+predeclared paraphrases for each target over deterministic paired seeds and makes
+a fresh hosted request for every robot scene. Its reported full-chain rate uses
+all requested cases as the denominator, including any plan or validation failure
+that safely prevents robot motion.

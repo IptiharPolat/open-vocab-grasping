@@ -263,6 +263,21 @@ is a bounded integration sample, not a replacement for the 26/40 fixed-seed
 grasp reliability benchmark. See [cases.csv](outputs/20260816_133053_957394_agent_evaluation/cases.csv)
 and the [summary](outputs/20260816_133053_957394_agent_evaluation/summary.md).
 
+To measure the true 40-episode Agent success rate, call DeepSeek separately for
+every scene and pair the seeds with the existing downstream benchmark:
+
+```bash
+bash scripts/run_agent_evaluation.sh --mode deepseek \
+  --full-episodes-per-target 10 --seed-start 0
+```
+
+This executes 40 hosted requests and 40 full robot episodes: mug seeds 0-9,
+bottle 10-19, bowl 20-29 and box 30-39. Each target rotates through its five
+fixed bilingual paraphrases twice. Planning/schema/target failures, rejected
+generated Python and robot runtime failures all remain in the full-chain
+denominator. The command uses the provider's normal token balance and can take
+several minutes on the isolated RTX 3050 GraspNet service.
+
 ## Interactive visual dashboard
 
 Start the local control room from the project terminal:
