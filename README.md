@@ -25,7 +25,31 @@ generated programs; all 40 stage-gated robot tasks executed and **26/40 (65%)**
 succeeded. The 14 failures were entirely downstream: one detector miss, four
 no-accepted-candidate cases and nine failed lifts.
 
-![Verified DeepSeek, real YOLO-World and official GraspNet bottle grasp](outputs/20260816_140448_414159_run_seed10/demo.gif)
+## Verified visual walkthrough (PyBullet simulation)
+
+The following retained **seed-10 bottle** episode is a real full-chain run:
+the Chinese instruction was planned by `deepseek-v4-flash`, the target was
+detected by YOLO-World, candidates came from the isolated official GraspNet
+checkpoint, and the Panda completed the lift in PyBullet. It is a simulation
+result—not a physical-robot demonstration—and simulator instance IDs were not
+used for semantic target selection.
+
+**Instruction:** `请帮我抓取桌面上的瓶子` → **validated target:** `bottle`
+
+![Verified full-chain Panda bottle grasp in PyBullet](outputs/20260816_140448_414159_run_seed10/demo.gif)
+
+| 1. Open-vocabulary detection | 2. 2D/3D candidate association | 3. Scene-level 6-DoF filtering |
+| --- | --- | --- |
+| ![YOLO-World bottle detection](outputs/20260816_140448_414159_run_seed10/detections.png) | ![Candidates projected into the semantic image](outputs/20260816_140448_414159_run_seed10/filtered_candidates_2d.png) | ![Filtered GraspNet candidates](outputs/20260816_140448_414159_run_seed10/filtered_candidates_3d.png) |
+| Dynamic text class finds the requested `bottle`. | Centers must be inside the box and depth-consistent. | Collision, workspace, contact, IK and trajectory checks retain executable grasps. |
+
+For this retained run, **1,009** official GraspNet candidates were reduced to
+**4** accepted candidates; the bottle lifted **0.115870 m**. The complete audit
+bundle includes the [validated plan](outputs/20260816_140448_414159_run_seed10/agent_plan.json),
+[allowlisted generated DSL](outputs/20260816_140448_414159_run_seed10/agent_generated_plan.py),
+[synchronized execution trace](outputs/20260816_140448_414159_run_seed10/agent_generated_plan_trace.json),
+[structured result](outputs/20260816_140448_414159_run_seed10/agent_result.json), and
+[MP4 video](outputs/20260816_140448_414159_run_seed10/demo.mp4).
 
 ## Architecture
 

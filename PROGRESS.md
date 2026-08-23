@@ -958,3 +958,62 @@ Final verification on 2026-08-15:
   the three tracked release-evidence directories required by the public README:
   the successful DeepSeek/YOLO-World/official-GraspNet episode and both 40-case
   benchmark summaries.
+
+## Job-material evidence audit - 2026-08-23
+
+- Performed a no-cost, no-model-rerun audit of the retained outputs. Independently
+  recomputed the 40-row `open-vocab-graspnet` CSV: detection 38/40, target
+  selection 37/40, IK 35/40, end-to-end 26/40, official GraspNet mean inference
+  5.844949 s and mean episode time 11.519495 s; these match its JSON summary.
+- Independently recomputed the retained 40-row real DeepSeek CSV: 40 DeepSeek
+  responses, 40 valid plans/targets/generated DSLs, 0.861097 s mean planning
+  latency, 12,267 reported tokens and 26/40 full-chain successes. Seed-by-seed
+  success/failure comparison with the paired downstream CSV found zero mismatches.
+- Re-ran only the CPU regression suite with cache disabled: **64 passed in 5.22 s**.
+  No DeepSeek request, YOLO inference, GraspNet inference or model training was
+  performed in this audit.
+- Added `docs/job_material_evidence.md` and `portfolio_assets/manifest.csv`.
+  The audit explicitly marks the deleted raw PLY, complete failure videos and
+  historical outputs as unavailable rather than treating old README paths as
+  current evidence.
+
+## Resume material delivery - 2026-08-23
+
+- Added evidence-linked Chinese and English project entries plus interview
+  material under `deliverables/resume/`. The Chinese entry is exactly three
+  result-bounded bullets; it labels the work as PyBullet simulation and keeps
+  DeepSeek as a schema-, stage-order- and AST-validated structured planner.
+- No hosted API call, model inference, training, commit, push or repository
+  cleanup was performed while preparing these materials.
+
+## Portfolio PowerPoint delivery - 2026-08-23
+
+- Audited four public GitHub presentation Skills before authoring. No built-in
+  `Presentations` Skill was available in the current Codex runtime; the review
+  is recorded in `docs/ppt_skill_review.md`. Only the MIT
+  `presentation-skill` high-level evidence-first/QA design principles were
+  referenced; no third-party Skill scripts, cloud services, image generation,
+  macros or global installs were used.
+- Added an eight-slide, 16:9 Chinese robotics portfolio deck under
+  `deliverables/portfolio/`, with editable PptxGenJS text/shapes, local
+  project images, source-linked speaker notes, a 6–7 minute Chinese script,
+  asset ledger, rendered PNG set, contact sheet and PDF export.
+- The deck builder reads the retained formal 40-row CSV files and refuses to
+  build if 38/40 detection, 37/40 target selection, 35/40 IK, 26/40 physical
+  success or 40/40 Agent plan validation do not match. Final QA found eight
+  slides/notes, eight 16:9 renders and no placeholder text; one intentional
+  Slide-6 line-wrap repair was rebuilt and re-rendered.
+- No DeepSeek request, YOLO/GraspNet inference, training, push, PR or original
+  experiment-file mutation occurred during portfolio production.
+
+## GitHub README visual walkthrough - 2026-08-23
+
+- Expanded the tracked seed-10 full-chain GIF in `README.md` into a visual
+  walkthrough: Chinese instruction, real YOLO-World overlay, 2D/3D candidate
+  association figures, GraspNet candidate-to-accepted reduction and links to
+  the plan/DSL/trace/result/MP4 audit bundle.
+- Every displayed artifact is tracked under
+  `outputs/20260816_140448_414159_run_seed10/` and is marked as a PyBullet
+  simulation result. The text explicitly preserves the no-truth-leakage and
+  constrained-DSL boundaries. No new model run, media generation, API call or
+  remote upload was performed.

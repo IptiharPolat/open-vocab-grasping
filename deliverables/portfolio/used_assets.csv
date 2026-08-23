@@ -1,0 +1,9 @@
+file_path,asset_type,slide,experiment,is_real_model_result,source_note
+outputs/20260816_140448_414159_run_seed10/demo.gif,simulation grasp GIF,1,DeepSeek+YOLO-World+official GraspNet seed 10,true,real retained source used to extract PPT key frames
+deliverables/portfolio/assets/seed10_approach.png,extracted real GIF frame,1 and 5,DeepSeek+YOLO-World+official GraspNet seed 10,true,derived locally from retained real demo.gif
+deliverables/portfolio/assets/seed10_lift.png,extracted real GIF frame,5 and 8,DeepSeek+YOLO-World+official GraspNet seed 10,true,derived locally from retained real demo.gif
+outputs/20260816_140448_414159_run_seed10/detections.png,YOLO-World detection overlay,4,DeepSeek+YOLO-World+official GraspNet seed 10,true,manifest-approved public asset
+outputs/20260816_140448_414159_run_seed10/filtered_candidates_2d.png,2D semantic association visualization,4 and 5,DeepSeek+YOLO-World+official GraspNet seed 10,true,manifest-approved public asset
+outputs/20260816_140448_414159_run_seed10/filtered_candidates_3d.png,3D GraspNet filtering visualization,5,DeepSeek+YOLO-World+official GraspNet seed 10,true,manifest-approved public asset
+outputs/20260815_001417_040250_evaluation/episodes.csv,formal result data,7,open-vocab-graspnet 4 classes x 10 seeds,true,all plotted values include denominators
+outputs/20260816_140225_904008_agent_evaluation/cases.csv,formal Agent result data,6 and 7,real DeepSeek 4 classes x 10 seeds,true,all planner values are real API results

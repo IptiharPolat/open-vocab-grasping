@@ -7,3 +7,9 @@ weights/
 third_party/
 outputs/*
 !outputs/.gitkeep
+
+# Local presentation-builder dependency cache and pre-QA renders. The final
+# portfolio artifacts live under deliverables/portfolio/rendered/final/.
+tools/presentation/node_modules/
+deliverables/portfolio/rendered/slide-*.png
+deliverables/portfolio/rendered/verify-*.png
