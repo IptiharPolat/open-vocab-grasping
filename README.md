@@ -6,6 +6,27 @@ dynamic text class, reconstructs a metric RGB-D point cloud, associates the 2D
 semantic result with scene-level 6-DoF candidates, filters collisions and Panda
 IK trajectories, and executes pregrasp, approach, close and lift states.
 
+## 30-second visual overview (PyBullet simulation)
+
+**Input:** `请帮我抓取桌面上的瓶子` → **validated target:** `bottle` →
+**output:** Panda completes a physical lift in PyBullet.
+
+![Verified full-chain Panda bottle grasp in PyBullet](outputs/20260816_140448_414159_run_seed10/demo.gif)
+
+| 1. Open-vocabulary detection | 2. Semantic-to-3D association | 3. 6-DoF grasp filtering |
+| --- | --- | --- |
+| ![YOLO-World bottle detection](outputs/20260816_140448_414159_run_seed10/detections.png) | ![Candidates projected into the semantic image](outputs/20260816_140448_414159_run_seed10/filtered_candidates_2d.png) | ![Filtered GraspNet candidates](outputs/20260816_140448_414159_run_seed10/filtered_candidates_3d.png) |
+| YOLO-World dynamically detects the requested `bottle`. | Candidate centers must lie in the detection box and match its depth. | Collision, workspace, contact, IK and trajectory checks retain executable grasps. |
+
+This is a retained **seed-10 full-chain** run with DeepSeek task planning, real
+YOLO-World and the official GraspNet checkpoint: **1,009** candidates became
+**4** executable candidates and the bottle lifted **0.115870 m**. It is a
+**PyBullet simulation**, not a physical-robot demonstration. See the
+[MP4 video](outputs/20260816_140448_414159_run_seed10/demo.mp4),
+[validated plan](outputs/20260816_140448_414159_run_seed10/agent_plan.json),
+[allowlisted DSL](outputs/20260816_140448_414159_run_seed10/agent_generated_plan.py),
+and [structured result](outputs/20260816_140448_414159_run_seed10/agent_result.json).
+
 The current machine has verified both the CPU baseline and **official GraspNet
 GPU inference** on its RTX 3050 through a dedicated CUDA 11.7 Conda service.
 The complete real-YOLO + official-GraspNet bottle run reaches `DONE`. After
@@ -34,14 +55,10 @@ checkpoint, and the Panda completed the lift in PyBullet. It is a simulation
 result—not a physical-robot demonstration—and simulator instance IDs were not
 used for semantic target selection.
 
-**Instruction:** `请帮我抓取桌面上的瓶子` → **validated target:** `bottle`
-
-![Verified full-chain Panda bottle grasp in PyBullet](outputs/20260816_140448_414159_run_seed10/demo.gif)
-
-| 1. Open-vocabulary detection | 2. 2D/3D candidate association | 3. Scene-level 6-DoF filtering |
-| --- | --- | --- |
-| ![YOLO-World bottle detection](outputs/20260816_140448_414159_run_seed10/detections.png) | ![Candidates projected into the semantic image](outputs/20260816_140448_414159_run_seed10/filtered_candidates_2d.png) | ![Filtered GraspNet candidates](outputs/20260816_140448_414159_run_seed10/filtered_candidates_3d.png) |
-| Dynamic text class finds the requested `bottle`. | Centers must be inside the box and depth-consistent. | Collision, workspace, contact, IK and trajectory checks retain executable grasps. |
+The GIF and the three evidence figures above are the visual trace of this same
+episode: dynamic detection, semantic/depth association and scene-level 6-DoF
+candidate filtering. They are retained source artifacts rather than illustrative
+mockups.
 
 For this retained run, **1,009** official GraspNet candidates were reduced to
 **4** accepted candidates; the bottle lifted **0.115870 m**. The complete audit
